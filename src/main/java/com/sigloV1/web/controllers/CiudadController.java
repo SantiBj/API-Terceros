@@ -30,7 +30,7 @@ public class CiudadController {
         return new ResponseEntity<>(ciudadService.crearCiudad(ciudad), HttpStatus.CREATED);
     }
 
-    @PostMapping("/crear-direcciones")
+    @PostMapping("/direcciones")
     public ResponseEntity<CiudadDTOResDir> crearCiudadConDirecciones(@RequestBody @Valid CiudadDTOReqDir ciudad) {
         return new ResponseEntity<>(ciudadService.crearCiudadConDirecciones(ciudad), HttpStatus.CREATED);
     }
@@ -38,7 +38,7 @@ public class CiudadController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> eliminarCiudad(@PathVariable Long id){
         ciudadService.eliminarCiudad(id);
-        return new ResponseEntity<>("El pais a sido eliminado con exito.",HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>("La ciudad a sido eliminado con exito.",HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/{id}")

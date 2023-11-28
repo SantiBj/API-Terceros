@@ -4,6 +4,7 @@ import com.sigloV1.dao.models.CiudadEntity;
 import com.sigloV1.dao.models.DireccionEntity;
 import com.sigloV1.dao.repositories.CiudadRepository;
 import com.sigloV1.service.interfaces.ICiudadService;
+import com.sigloV1.service.interfaces.adapters.CiudadAdapter;
 import com.sigloV1.service.interfaces.adapters.EstadoAdapter;
 import com.sigloV1.web.dtos.req.ciudad.CiudadDTOReq;
 import com.sigloV1.web.dtos.req.ciudad.CiudadDTOReqDir;
@@ -16,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CiudadService implements ICiudadService {
+public class CiudadService implements ICiudadService, CiudadAdapter {
 
     @Autowired
     private ModelMapper modelMapper;
@@ -27,7 +28,7 @@ public class CiudadService implements ICiudadService {
     @Autowired
     private EstadoAdapter estadoAdapter;
 
-    private CiudadEntity obtenerCiudadOException(Long id) {
+    public CiudadEntity obtenerCiudadOException(Long id) {
         CiudadEntity ciudad = ciudadRepository.findById(id)
                 .orElseThrow(() -> new BadRequestCustom("La ciudad no existe"));
         if (!ciudad.getEstado().getPais().getEstado()) {

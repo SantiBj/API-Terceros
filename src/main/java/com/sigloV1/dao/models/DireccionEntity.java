@@ -45,9 +45,9 @@ public class DireccionEntity {
 
 
     @OneToMany(targetEntity = TerceroDireccionEntity.class,mappedBy = "direccion",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    private List<TerceroDireccionEntity> terceroDirecciones;
+    private List<TerceroDireccionEntity> terceros;
 
-    @OneToMany(targetEntity = DireccionTelefonoEntity.class,mappedBy = "direccion",cascade = CascadeType.ALL)
+    @OneToMany(targetEntity = DireccionTelefonoEntity.class,mappedBy = "direccion",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<DireccionTelefonoEntity> telefonos;
 
     @OneToMany(targetEntity = ContactoDireccionEntity.class,mappedBy = "direccion",cascade = CascadeType.ALL,fetch = FetchType.LAZY)

@@ -31,7 +31,6 @@ public class TelefonoEntity {
     @Column(name = "tipo_telefono",nullable = false)
     private ETipoTelefono tipoTelefono;
 
-    @NotBlank
     @Size(max = 5)
     private String extension;
 
