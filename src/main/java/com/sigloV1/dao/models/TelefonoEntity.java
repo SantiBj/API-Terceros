@@ -37,9 +37,4 @@ public class TelefonoEntity {
     @OneToMany(targetEntity = TerceroTelefonoEntity.class,mappedBy = "telefono",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<TerceroTelefonoEntity> terceroTelefono;
 
-    @OneToMany(targetEntity = DireccionTelefonoEntity.class,mappedBy = "telefono",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    private List<DireccionTelefonoEntity> direcciones;
-
-    @OneToMany(targetEntity = ContactoTelefonoEntity.class,mappedBy = "telefono",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    private List<ContactoTelefonoEntity> contactos;
 }

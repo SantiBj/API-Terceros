@@ -11,7 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class PaisDTOResBi {
-
     private Long id;
     private String nombrePais;
     private String indicativo;

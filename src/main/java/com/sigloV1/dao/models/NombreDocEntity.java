@@ -22,7 +22,7 @@ public class NombreDocEntity {
 
     @NotBlank
     @NotNull
-    @Size(max = 15)
+    @Size(max = 100)
     @Column(nullable = false,unique = true)
     private String nombre;
 

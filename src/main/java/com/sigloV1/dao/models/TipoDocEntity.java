@@ -25,7 +25,7 @@ public class TipoDocEntity {
     @NotBlank
     @Size(min = 2,max = 100)
     @Column(unique = true,nullable = false)
-    private String name;
+    private String nombre;
 
     @OneToMany(targetEntity = DocDetallesEntity.class,mappedBy = "tipoDoc",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
     @Column(insertable = false,updatable = false)

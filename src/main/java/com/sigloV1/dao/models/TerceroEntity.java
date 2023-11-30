@@ -49,16 +49,10 @@ public class TerceroEntity {
     @JoinColumn(name = "id_doc_detalles",referencedColumnName = "id",nullable = false)
     private DocDetallesEntity docDetalles;
 
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "id_tercero_padre",referencedColumnName = "id",nullable = false)
-    private TerceroEntity terceroPadre;
 
-    //se evita que se creen entidades desde aca
-    //se debe enviar solo entidades ya existentes
-    @OneToMany(mappedBy = "terceroPadre",cascade = {},fetch = FetchType.LAZY)
-    @Column(insertable = false,updatable = false)
-    private List<TerceroEntity> terceroHijos;
+    @ManyToOne
+    @JoinColumn(name = "id_tercero_padre",referencedColumnName = "id",nullable = true)
+    private TerceroEntity terceroPadre;
 
     @ManyToOne
     @JoinColumn(name = "id_tipo_tercero",referencedColumnName = "id")
@@ -69,15 +63,27 @@ public class TerceroEntity {
     @Column(name = "fecha_nacimiento")
     private Date fechaNacimento;
 
-    @OneToMany(targetEntity = TerceroDireccionEntity.class,mappedBy = "tercero",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+
+    //se evita que se creen entidades desde aca
+    //se debe enviar solo entidades ya existentes
+
+    @OneToMany(mappedBy = "terceroPadre",cascade = {},fetch = FetchType.LAZY)
+    @Column(insertable = false,updatable = false)
+    private List<TerceroEntity> terceroHijos;
+
+    @OneToMany(targetEntity = TerceroDireccionEntity.class,mappedBy = "tercero",cascade = {},fetch = FetchType.LAZY)
+    @Column(insertable = false,updatable = false)
     private List<TerceroDireccionEntity> direcciones;
 
-    @OneToMany(targetEntity = TerceroTelefonoEntity.class,mappedBy = "tercero",cascade = CascadeType.PERSIST,fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = TerceroTelefonoEntity.class,mappedBy = "tercero",cascade = {},fetch = FetchType.LAZY)
+    @Column(insertable = false,updatable = false)
     private List<TerceroTelefonoEntity> telefonos;
 
-    @OneToMany(targetEntity = ContactoEntity.class, mappedBy = "tercero",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = ContactoEntity.class, mappedBy = "tercero",cascade = {},fetch = FetchType.LAZY)
+    @Column(insertable = false,updatable = false)
     private List<ContactoEntity> contactos;
 
-    @OneToMany(targetEntity = TerceroRolEntity.class,mappedBy = "tercero",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(targetEntity = TerceroRolEntity.class,mappedBy = "tercero",cascade = {},fetch = FetchType.EAGER)
+    @Column(insertable = false,updatable = false)
     private List<TerceroRolEntity> roles;
 }

@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -30,4 +32,7 @@ public class TerceroDireccionEntity {
     @NotNull
     @NotBlank
     private Boolean estado;
+
+    @OneToMany(mappedBy = "direccionTer",targetEntity = DireccionTelefonoEntity.class,cascade = {},fetch = FetchType.EAGER)
+    private List<DireccionTelefonoEntity> telefonos;
 }

@@ -12,7 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class EstadoDTOResBiPais {
-
     private Long id;
     private String nombre;
     private List<CiudadDTORes> ciudades;

@@ -1,6 +1,8 @@
 package com.sigloV1.dao.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -9,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "direccion_telefono")
+@Table(name = "direccionTer_telefonoTer")
 public class DireccionTelefonoEntity {
 
     @Id
@@ -17,10 +19,14 @@ public class DireccionTelefonoEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_telefono",referencedColumnName = "id",nullable = false)
-    private TelefonoEntity telefono;
+    @JoinColumn(name = "id_telefono_tercero",referencedColumnName = "id",nullable = false)
+    private TerceroTelefonoEntity telefonoTer;
 
     @ManyToOne
-    @JoinColumn(name = "id_direccion",referencedColumnName = "id",nullable = false)
-    private DireccionEntity direccion;
+    @JoinColumn(name = "id_direccion_tercero",referencedColumnName = "id",nullable = false)
+    private TerceroDireccionEntity direccionTer;
+
+    @NotNull
+    @NotBlank
+    private Boolean estado;
 }

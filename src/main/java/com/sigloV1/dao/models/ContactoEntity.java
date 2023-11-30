@@ -21,27 +21,24 @@ public class ContactoEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_contacto",referencedColumnName = "id",nullable = false)
+    @JoinColumn(name = "id_contacto", referencedColumnName = "id", nullable = false)
     private TerceroEntity contacto;
 
     @ManyToOne
-    @JoinColumn(name = "id_tercero",referencedColumnName = "id",nullable = false)
+    @JoinColumn(name = "id_tercero", referencedColumnName = "id", nullable = false)
     private TerceroEntity tercero;
 
     @ManyToOne
-    @JoinColumn(name = "id_cargo",referencedColumnName = "id",nullable = false)
+    @JoinColumn(name = "id_cargo", referencedColumnName = "id", nullable = false)
     private CargoEntity cargo;
 
     @NotBlank
     @NotNull
     private Boolean estado;
 
-    @OneToMany(targetEntity = ContactoTelefonoEntity.class,mappedBy = "contacto",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    private List<ContactoTelefonoEntity> telefonos;
+    @OneToMany(mappedBy = "contacto", targetEntity = DireccionTelefonoContactoEntity.class, cascade = {}, fetch = FetchType.EAGER)
+    private List<DireccionTelefonoContactoEntity> direccionesTelefonos;
 
-    @OneToMany(targetEntity = ContactoDireccionEntity.class,mappedBy = "contacto",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    private List<ContactoDireccionEntity> direcciones;
-
-    @OneToOne(targetEntity = ContactoEmailEntity.class,mappedBy = "contacto",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToOne(targetEntity = ContactoEmailEntity.class, mappedBy = "contacto", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ContactoEmailEntity> emails;
 }
