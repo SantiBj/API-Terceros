@@ -1,14 +1,12 @@
 package com.sigloV1.service.impl;
 
-import com.sigloV1.dao.models.TelefonoEntity;
-import com.sigloV1.dao.models.TerceroEntity;
-import com.sigloV1.dao.models.TerceroTelefonoEntity;
+import com.sigloV1.dao.models.*;
 import com.sigloV1.dao.repositories.TelefonoRepository;
+import com.sigloV1.dao.repositories.relacionesMaM.DireccionTelefonoRepository;
 import com.sigloV1.dao.repositories.relacionesMaM.TerceroTelefonoRepository;
-import com.sigloV1.service.interfaces.ITelefonoService;
+import com.sigloV1.service.interfaces.adapters.TelefonoAdapter;
 import com.sigloV1.service.interfaces.adapters.TerceroAdapter;
 import com.sigloV1.web.dtos.req.telefono.TelefonoReqDTO;
-import com.sigloV1.web.dtos.res.telefono.TerceroTelefonoResDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class TelefonoService implements ITelefonoService {
+public class TelefonoService implements TelefonoAdapter {
 
     @Autowired
     private TerceroAdapter terceroAdapter;
@@ -28,60 +26,49 @@ public class TelefonoService implements ITelefonoService {
     private TerceroTelefonoRepository terceroTelefonoRepository;
 
     @Autowired
+    private DireccionTelefonoRepository direccionTelefonoRepository;
+
+    @Autowired
     private ModelMapper modelMapper;
 
 
-    ///corregir logica
     @Override
-    public <T> TerceroTelefonoResDTO crearTelefonoUnionTercero(TelefonoReqDTO telefono, T tercero) {
+    public <T> TerceroTelefonoEntity crearTelefonoUnionTercero(TelefonoReqDTO telefono, T tercero) {
         Optional<TelefonoEntity> telefonoExistente = telefonoRepository.findByNumero(telefono.getNumero());
-        if (tercero instanceof TerceroEntity){
-            if (telefonoExistente.isEmpty()){
-                TelefonoEntity nuevoTelefono = telefonoRepository.save(TelefonoEntity.builder()
-                    .numero(telefono.getNumero())
-                    .tipoTelefono(telefono.getTipoTelefono())
-                    .extension(telefono.getExtension())
-                    .build());
-                TerceroTelefonoEntity relacion = terceroTelefonoRepository.save(
-                        TerceroTelefonoEntity.builder()
-                                .tercero((TerceroEntity) tercero)
-                                .telefono(nuevoTelefono)
-                                .build()
-                );
-                return modelMapper.map(relacion, TerceroTelefonoResDTO.class);
-            }else{
-                return modelMapper.map(terceroTelefonoRepository.save(
-                        TerceroTelefonoEntity.builder()
-                                .tercero((TerceroEntity) tercero)
-                                .telefono(telefonoExistente.get())
-                                .build()
-                ), TerceroTelefonoResDTO.class);
-            }
-        }else{
-            if (telefonoExistente.isEmpty()){
-                TelefonoEntity nuevoTelefono = telefonoRepository.save(TelefonoEntity.builder()
-                        .numero(telefono.getNumero())
-                        .tipoTelefono(telefono.getTipoTelefono())
-                        .extension(telefono.getExtension())
-                        .build());
-                TerceroTelefonoEntity relacion = terceroTelefonoRepository.save(
-                        TerceroTelefonoEntity.builder()
-                                .tercero((TerceroEntity) tercero)
-                                .telefono(nuevoTelefono)
-                                .build()
-                );
-                return modelMapper.map(relacion, TerceroTelefonoResDTO.class);
-            }else{
-                return modelMapper.map(terceroTelefonoRepository.save(
-                        TerceroTelefonoEntity.builder()
-                                .tercero((TerceroEntity) tercero)
-                                .telefono(telefonoExistente.get())
-                                .build()
-                ), TerceroTelefonoResDTO.class);
-            }
+        TelefonoEntity telefonoAAsignar;
+        TerceroEntity terceroAAsignar;
+
+        if (tercero instanceof TerceroEntity) {
+            terceroAAsignar = (TerceroEntity) tercero;
+        } else {
+            terceroAAsignar = terceroAdapter.obtenerTerceroOException((Long) tercero);
         }
 
+        telefonoAAsignar = telefonoExistente.orElseGet(() -> telefonoRepository.save(TelefonoEntity.builder()
+                .numero(telefono.getNumero())
+                .tipoTelefono(telefono.getTipoTelefono())
+                .extension(telefono.getExtension())
+                .build()));
 
-        return ;
+        Optional<TerceroTelefonoEntity> relacion = terceroTelefonoRepository.findByTelefonoAndTercero(telefonoAAsignar, terceroAAsignar);
+        return relacion.orElseGet(() ->
+                terceroTelefonoRepository.save(
+                        TerceroTelefonoEntity.builder()
+                                .tercero(terceroAAsignar)
+                                .telefono(telefonoAAsignar)
+                                .estado(true)
+                                .build()
+                )
+        );
+    }
+
+    public DireccionTelefonoEntity unionTelefonoDireccion(TerceroDireccionEntity direccion, TerceroTelefonoEntity telefono) {
+        Optional<DireccionTelefonoEntity> relacion = direccionTelefonoRepository.findByDireccionTerAndTelefonoTer(direccion, telefono);
+        return relacion.orElseGet(() -> direccionTelefonoRepository.save(
+                DireccionTelefonoEntity.builder()
+                        .telefonoTer(telefono)
+                        .direccionTer(direccion)
+                        .estado(true)
+                        .build()));
     }
 }

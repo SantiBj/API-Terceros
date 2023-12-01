@@ -26,7 +26,6 @@ public class TerceroTelefonoEntity {
     @JoinColumn(name = "id_tercero",referencedColumnName = "id",nullable = false)
     private TerceroEntity tercero;
 
-    @NotBlank
     @NotNull
     private Boolean estado;
 }

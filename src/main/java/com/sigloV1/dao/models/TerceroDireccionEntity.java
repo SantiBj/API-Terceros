@@ -30,7 +30,6 @@ public class TerceroDireccionEntity {
     private TerceroEntity tercero;
 
     @NotNull
-    @NotBlank
     private Boolean estado;
 
     @OneToMany(mappedBy = "direccionTer",targetEntity = DireccionTelefonoEntity.class,cascade = {},fetch = FetchType.EAGER)

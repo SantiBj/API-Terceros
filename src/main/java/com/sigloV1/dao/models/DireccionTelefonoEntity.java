@@ -27,6 +27,5 @@ public class DireccionTelefonoEntity {
     private TerceroDireccionEntity direccionTer;
 
     @NotNull
-    @NotBlank
     private Boolean estado;
 }
