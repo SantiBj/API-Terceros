@@ -22,4 +22,6 @@ public class TelefonoResDTO {
     private ETipoTelefono tipoTelefono;
 
     private String extension;
+
+    private Boolean estado;
 }

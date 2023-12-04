@@ -5,6 +5,7 @@ import com.sigloV1.dao.models.TerceroDireccionEntity;
 import com.sigloV1.web.dtos.req.direccion.DireccionReqDTO;
 import com.sigloV1.web.dtos.req.direccion.DireccionTelefonosReqDTO;
 import com.sigloV1.web.dtos.res.direccion.DireccionResDTO;
+import com.sigloV1.web.dtos.res.direccion.DireccionTelefonosResDTO;
 
 import java.util.List;
 
@@ -12,9 +13,11 @@ public interface IDireccionService {
 
     <D,T> void crearDireccionSegunCorresponda(D direccion,T tercero);
 
-    void desactivarRelacionDireccionTercero(Long direccion, Long tercero);
-
     DireccionResDTO editarDireccion(DireccionReqDTO direccion, Long id);
 
-    void eliminarDireccion(Long direccion);
+    void eliminarDireccion(Long idDireccion,Long idTercero);
+
+    void desactivarDireccionTercero(Long id, Long idTercero);
+
+    List<DireccionTelefonosResDTO> obtenerDireccionesPorTercero(Long idTercero);
 }

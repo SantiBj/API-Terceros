@@ -19,13 +19,13 @@ public class DireccionTelefonoEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_telefono_tercero",referencedColumnName = "id",nullable = false)
+    @JoinColumn(name = "id_telefono_tercero", referencedColumnName = "id", nullable = false)
     private TerceroTelefonoEntity telefonoTer;
 
     @ManyToOne
-    @JoinColumn(name = "id_direccion_tercero",referencedColumnName = "id",nullable = false)
+    @JoinColumn(name = "id_direccion_tercero", referencedColumnName = "id", nullable = false)
     private TerceroDireccionEntity direccionTer;
 
     @NotNull
-    private Boolean estado;
+    private Boolean contacto;
 }
