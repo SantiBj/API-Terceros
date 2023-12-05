@@ -1,4 +1,4 @@
-package com.sigloV1.service.interfaces.adapters;
+package com.sigloV1.service.interfaces.adapters.telefono;
 
 import com.sigloV1.dao.models.*;
 import com.sigloV1.web.dtos.req.telefono.TelefonoReqDTO;
@@ -8,7 +8,7 @@ public interface TelefonoAdapter {
 
     <T> TerceroTelefonoEntity crearTelefonoUnionTercero(TelefonoReqDTO telefono, T tercero);
 
-    void desactivarTelefonosTerceroDeDireccion(TerceroDireccionEntity direccion);
+    void estadoTelefonosTerceroDeDireccion(TerceroDireccionEntity direccion,Boolean estado);
 
     void eliminarRelacionDireccionYTercero(TerceroDireccionEntity direccion);
 

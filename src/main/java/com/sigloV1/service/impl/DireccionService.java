@@ -6,7 +6,8 @@ import com.sigloV1.dao.repositories.relacionesMaM.DireccionTelefonoRepository;
 import com.sigloV1.dao.repositories.relacionesMaM.TerceroDireccionRepository;
 import com.sigloV1.service.interfaces.IDireccionService;
 import com.sigloV1.service.interfaces.adapters.CiudadAdapter;
-import com.sigloV1.service.interfaces.adapters.TelefonoAdapter;
+import com.sigloV1.service.interfaces.adapters.direccion.DireccionAdapter;
+import com.sigloV1.service.interfaces.adapters.telefono.TelefonoAdapter;
 import com.sigloV1.service.interfaces.adapters.TerceroAdapter;
 import com.sigloV1.web.dtos.req.direccion.DireccionReqDTO;
 import com.sigloV1.web.dtos.req.direccion.DireccionTelefonosReqDTO;
@@ -26,9 +27,6 @@ import java.util.Optional;
 public class DireccionService implements IDireccionService {
 
     @Autowired
-    private CiudadAdapter ciudadAdapter;
-
-    @Autowired
     private DireccionRepository direccionRepository;
 
     @Autowired
@@ -38,68 +36,23 @@ public class DireccionService implements IDireccionService {
     private ModelMapper modelMapper;
 
     @Autowired
+    private CiudadAdapter ciudadAdapter;
+
+    @Autowired
     private TerceroAdapter terceroAdapter;
 
     @Autowired
     private TelefonoAdapter telefonoAdapter;
 
     @Autowired
-    private DireccionTelefonoRepository direccionTelefonoRepository;
-
-    private DireccionEntity obtenerDireccionEntityOException(Long id) {
-        return direccionRepository.findById(id)
-                .orElseThrow(() -> new BadRequestCustom("La direccion no existe."));
-    }
-
-    private DireccionEntity creacionDireccion(DireccionReqDTO direccion) {
-        Optional<DireccionEntity> direccionExistente = direccionRepository
-                .findByDireccionIgnoreCase(direccion.getDireccion());
-        if (direccionExistente.isEmpty()) {
-            DireccionEntity newDireccion = DireccionEntity.builder()
-                    .nombre(direccion.getNombre())
-                    .direccion(direccion.getDireccion())
-                    .codigoPostal(direccion.getCodigoPostal())
-                    .ciudad(ciudadAdapter.obtenerCiudadOException(direccion.getCiudad()))
-                    .build();
-            return direccionRepository.save(newDireccion);
-        } else {
-            return direccionExistente.get();
-        }
-    }
+    private DireccionAdapter logShareTel
+            ;
 
 
-    public TerceroDireccionEntity crearDireccionUnionTercero(DireccionReqDTO direccion, TerceroEntity tercero) {
-        DireccionEntity direccionEntity = creacionDireccion(direccion);
-        Optional<TerceroDireccionEntity> relacionExistente = terceroDireccionRepository
-                .findByDireccionAndTercero(direccionEntity, tercero);
-        return relacionExistente.orElseGet(() -> terceroDireccionRepository
-                .save(TerceroDireccionEntity.builder()
-                        .tercero(tercero)
-                        .direccion(direccionEntity)
-                        .estado(true)
-                        .build()
-                )
-        );
-    }
-
-
-    @Transactional
-    public List<DireccionTelefonoEntity> crearDireccionTelefonoUnionTercero(DireccionTelefonosReqDTO direccionTelefonos, TerceroEntity tercero) {
-        TerceroDireccionEntity direccion = crearDireccionUnionTercero(modelMapper.map(direccionTelefonos, DireccionReqDTO.class), tercero);
-        return direccionTelefonos.getTelefonos().stream().map(
-                telefono -> telefonoAdapter.unionTelefonoDireccion(
-                        direccion,
-                        telefonoAdapter.crearTelefonoUnionTercero(telefono, tercero),
-                        false
-                )
-        ).toList();
-    }
-
-    //puede ser llamado desde creacion tercero
-    //se puede crear solo con el endpoint direccion-telefonos o solo direccion
     @Override
     public <D, T> void crearDireccionSegunCorresponda(D direccion, T tercero) {
-        //conviertiendo el tercero a entidad
+        //puede ser llamado desde creacion tercero
+        //se puede crear solo con el endpoint direccion-telefonos o solo direccion
         TerceroEntity terceroEntity;
         if (tercero instanceof TerceroEntity) {
             terceroEntity = (TerceroEntity) tercero;
@@ -110,26 +63,26 @@ public class DireccionService implements IDireccionService {
         }
 
         if (direccion instanceof DireccionReqDTO) {
-            crearDireccionUnionTercero((DireccionReqDTO) direccion, terceroEntity);
+            logShareTel.crearDireccionUnionTercero((DireccionReqDTO) direccion, terceroEntity);
         } else if (direccion instanceof DireccionTelefonosReqDTO) {
-            crearDireccionTelefonoUnionTercero((DireccionTelefonosReqDTO) direccion, terceroEntity);
+            logShareTel.crearDireccionTelefonoUnionTercero((DireccionTelefonosReqDTO) direccion, terceroEntity);
         } else {
             throw new BadRequestCustom("La direccion no cumple con el formato indicado");
         }
     }
 
     @Override
-    public void desactivarDireccionTercero(Long id, Long idTercero) {
+    public void estadoDireccionTercero(Long id, Long idTercero,Boolean estado) {
         try {
-            DireccionEntity direccion = obtenerDireccionEntityOException(id);
+            DireccionEntity direccion = logShareTel.obtenerDireccionEntityOException(id);
             TerceroEntity tercero = terceroAdapter.obtenerTerceroOException(idTercero);
             TerceroDireccionEntity relacion = terceroDireccionRepository
                     .findByDireccionAndTercero(direccion, tercero)
                     .orElseThrow(() -> new BadRequestCustom("La direccion no se encuentra relaciona"));
 
-            relacion.setEstado(false);
+            relacion.setEstado(estado);
             relacion = terceroDireccionRepository.save(relacion);
-            telefonoAdapter.desactivarTelefonosTerceroDeDireccion(relacion);
+            telefonoAdapter.estadoTelefonosTerceroDeDireccion(relacion,estado);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new BadRequestCustom("Ocurrio un error al desactivar la direccion del tercero y los telefonos asociados.");
@@ -141,7 +94,7 @@ public class DireccionService implements IDireccionService {
         try {
             TerceroEntity tercero = terceroAdapter.obtenerTerceroOException(idTercero);
             TerceroDireccionEntity relacionDireccionTercero = terceroDireccionRepository
-                    .findByDireccionAndTercero(obtenerDireccionEntityOException(idDireccion), tercero)
+                    .findByDireccionAndTercero(logShareTel.obtenerDireccionEntityOException(idDireccion), tercero)
                     .orElseThrow(() -> new BadRequestCustom("La direccion no tiene relacion con el tercero indicado."));
             telefonoAdapter.eliminarRelacionDireccionYTercero(relacionDireccionTercero);
             terceroDireccionRepository.delete(relacionDireccionTercero);
@@ -154,7 +107,7 @@ public class DireccionService implements IDireccionService {
 
     @Override
     public DireccionResDTO editarDireccion(DireccionReqDTO datos, Long idDireccion) {
-        DireccionEntity direccion = obtenerDireccionEntityOException(idDireccion);
+        DireccionEntity direccion = logShareTel.obtenerDireccionEntityOException(idDireccion);
         direccion.setNombre(datos.getNombre());
         direccion.setDireccion(datos.getDireccion());
         direccion.setCodigoPostal(datos.getCodigoPostal());

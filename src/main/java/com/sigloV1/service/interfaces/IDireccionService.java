@@ -15,9 +15,9 @@ public interface IDireccionService {
 
     DireccionResDTO editarDireccion(DireccionReqDTO direccion, Long id);
 
-    void eliminarDireccion(Long idDireccion,Long idTercero);
+    void eliminarDireccion(Long idDireccion, Long idTercero);
 
-    void desactivarDireccionTercero(Long id, Long idTercero);
+    void estadoDireccionTercero(Long id, Long idTercero,Boolean estado);
 
     List<DireccionTelefonosResDTO> obtenerDireccionesPorTercero(Long idTercero);
 }

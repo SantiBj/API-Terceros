@@ -38,10 +38,16 @@ public class DireccionController {
         return new ResponseEntity<>("La direccion a sido creada con sus respectivos telefonos", HttpStatus.CREATED);
     }
 
-    @PatchMapping("/desactivar/{id}/{idTercero}")
-    public ResponseEntity<String> desactivarDireccionTercero(@PathVariable Long id, @PathVariable Long idTercero) {
-        direccionService.desactivarDireccionTercero(id, idTercero);
+    @PatchMapping("/desactivar/{idDireccion}/{idTercero}")
+    public ResponseEntity<String> desactivarDireccionTercero(@PathVariable Long idDireccion, @PathVariable Long idTercero) {
+        direccionService.estadoDireccionTercero(idDireccion, idTercero,false);
         return new ResponseEntity<>("La direccion del tercero a sido desactivada con sus telefonos.", HttpStatus.OK);
+    }
+
+    @PatchMapping("/{idDireccion}/{idTercero}")
+    public ResponseEntity<String> activarDireccionTercero(@PathVariable Long idDireccion, @PathVariable Long idTercero){
+        direccionService.estadoDireccionTercero(idDireccion,idTercero,true);
+        return new ResponseEntity<>("La direccion y sus relaciones han sido activadas.",HttpStatus.OK);
     }
 
     @DeleteMapping("/{idDireccion}/{idTercero}")
