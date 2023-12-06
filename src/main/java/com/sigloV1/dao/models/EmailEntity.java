@@ -27,10 +27,7 @@ public class EmailEntity {
     @Column(unique = true)
     private String email;
 
-    @OneToMany(targetEntity = ContactoEmailEntity.class,mappedBy = "email", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
-    @Column(insertable = false,updatable = false)
-    private List<ContactoEmailEntity> contactos;
 
-    @OneToMany(targetEntity = TerceroEmailEntity.class,mappedBy = "email",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
-    private List<TerceroEmailEntity> terceros;
+    @OneToMany(targetEntity = TerceroRolEmailContEntity.class,mappedBy = "email",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    private List<TerceroRolEmailContEntity> terceros;
 }

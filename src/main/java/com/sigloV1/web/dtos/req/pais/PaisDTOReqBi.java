@@ -1,7 +1,6 @@
 package com.sigloV1.web.dtos.req.pais;
 
-import com.sigloV1.service.utils.MethodRequiredForGeneric;
-import com.sigloV1.web.dtos.req.pais.EstadoDTOReqBi;
+import com.sigloV1.service.logica.MethodRequiredForGeneric;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

@@ -26,7 +26,4 @@ public class TipoRolEntity {
     @Size(max = 100)
     @Column(unique = true)
     private String nombre;
-
-    @OneToMany(targetEntity = RolEntity.class,mappedBy = "tipoRol",cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
-    private List<RolEntity> roles;
 }

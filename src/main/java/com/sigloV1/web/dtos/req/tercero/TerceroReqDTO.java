@@ -1,16 +1,18 @@
-package com.sigloV1.web.dtos.res.tercero;
+package com.sigloV1.web.dtos.req.tercero;
 
 import com.sigloV1.dao.models.DocDetallesEntity;
 import com.sigloV1.dao.models.PaisEntity;
 import com.sigloV1.dao.models.TerceroEntity;
 import com.sigloV1.dao.models.TipoTerceroEntity;
-import jakarta.persistence.*;
+import com.sigloV1.web.dtos.req.direccion.DireccionTelefonosReqDTO;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,23 +21,38 @@ import java.util.Date;
 @Builder
 public class TerceroReqDTO {
 
-    private Long id;
-
+    @NotBlank
+    @NotNull
+    @Size(min=4,max=12)
     private String identificacion;
 
+    @NotBlank
+    @Size(min = 5, max = 255)
     private String nombre;
 
+    @Size(min = 5,max = 255)
     private String razonSocial;
 
+    @Size(min = 5,max = 255)
     private String nombreComercial;
 
-    private PaisEntity pais;
+    @NotNull
+    private Long pais;
 
-    private DocDetallesEntity docDetalles;
+    @NotNull
+    private Long docDetalles;
 
-    private TerceroEntity terceroPadre;
+    @NotNull
+    private Long terceroPadre;
 
-    private TipoTerceroEntity tipoTercero;
+    @NotNull
+    private Long tipoTercero;
 
+    @NotBlank
+    @NotNull
     private Date fechaNacimento;
+
+    private List<DireccionTelefonosReqDTO> direcciones;
+
+    private List<TerceroReqDTO> telefonos;
 }

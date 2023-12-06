@@ -4,42 +4,34 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.springframework.context.annotation.EnableMBeanExport;
 
 import java.util.List;
 
+@Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity
-@Table(name = "tercero_rol")
-public class TerceroRolEntity {
+@Table(name = "tercero_rol_tipo_tercero")
+public class TerceroRolTipoTer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_rol",referencedColumnName = "id",nullable = false)
-    private RolEntity rol;
-
-    @ManyToOne
     @JoinColumn(name = "id_tercero",referencedColumnName = "id",nullable = false)
     private TerceroEntity tercero;
 
-    @OneToMany(targetEntity = CuentaBancariaEntity.class,mappedBy = "propietario",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    private List<CuentaBancariaEntity> cuentas;
+    ///aca la relacion entre la intermedia de tipo_tercero y rol
+    @ManyToOne
+    @JoinColumn(name = "id_rol_tipo_tercero",referencedColumnName = "id",nullable = false)
+    private RolTipoTerceroEntity rol;
 
-    @OneToMany(targetEntity = TerceroEmailEntity.class,mappedBy = "tercero",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    private List<TerceroEmailEntity> emails;
-
-    @OneToMany(targetEntity = PolizaEntity.class,mappedBy = "aseguradora",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
-    @Column(insertable = false,updatable = false)
-    private List<PolizaEntity> polizas;
-
-    @NotBlank
     @NotNull
+    @NotBlank
     private Boolean estado;
 
     @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)

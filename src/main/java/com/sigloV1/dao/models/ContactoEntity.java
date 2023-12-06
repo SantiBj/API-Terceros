@@ -20,6 +20,7 @@ public class ContactoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    //varifica si al tercero o al tercero rol
     @ManyToOne
     @JoinColumn(name = "id_contacto", referencedColumnName = "id", nullable = false)
     private TerceroEntity contacto;
@@ -38,7 +39,4 @@ public class ContactoEntity {
 
     @OneToMany(mappedBy = "contacto", targetEntity = DireccionTelefonoContactoEntity.class, cascade = {}, fetch = FetchType.EAGER)
     private List<DireccionTelefonoContactoEntity> direccionesTelefonos;
-
-    @OneToOne(targetEntity = ContactoEmailEntity.class, mappedBy = "contacto", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<ContactoEmailEntity> emails;
 }

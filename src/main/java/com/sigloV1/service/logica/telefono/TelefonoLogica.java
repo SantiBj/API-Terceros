@@ -1,4 +1,4 @@
-package com.sigloV1.service.utils;
+package com.sigloV1.service.logica.telefono;
 
 import com.sigloV1.dao.models.*;
 import com.sigloV1.dao.repositories.TelefonoRepository;

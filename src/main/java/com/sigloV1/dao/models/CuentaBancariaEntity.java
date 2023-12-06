@@ -28,11 +28,11 @@ public class CuentaBancariaEntity {
 
     @ManyToOne
     @JoinColumn(name = "id_propietario",referencedColumnName = "id",nullable = false)
-    private TerceroRolEntity propietario;
+    private TerceroRolTipoTer propietario;
 
     @ManyToOne
     @JoinColumn(name = "id_banco",referencedColumnName = "id",nullable = false)
-    private TerceroRolEntity banco;
+    private TerceroRolTipoTer banco;
 
     @NotBlank
     @NotNull

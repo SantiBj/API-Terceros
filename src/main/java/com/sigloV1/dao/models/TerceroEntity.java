@@ -63,27 +63,11 @@ public class TerceroEntity {
     @Column(name = "fecha_nacimiento")
     private Date fechaNacimento;
 
-
-    //se evita que se creen entidades desde aca
-    //se debe enviar solo entidades ya existentes
-
     @OneToMany(mappedBy = "terceroPadre",cascade = {},fetch = FetchType.LAZY)
     @Column(insertable = false,updatable = false)
     private List<TerceroEntity> terceroHijos;
 
-    @OneToMany(targetEntity = TerceroDireccionEntity.class,mappedBy = "tercero",cascade = {},fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = TerceroRolTipoTer.class,mappedBy = "tercero",cascade = {},fetch = FetchType.EAGER)
     @Column(insertable = false,updatable = false)
-    private List<TerceroDireccionEntity> direcciones;
-
-    @OneToMany(targetEntity = TerceroTelefonoEntity.class,mappedBy = "tercero",cascade = {},fetch = FetchType.LAZY)
-    @Column(insertable = false,updatable = false)
-    private List<TerceroTelefonoEntity> telefonos;
-
-    @OneToMany(targetEntity = ContactoEntity.class, mappedBy = "tercero",cascade = {},fetch = FetchType.LAZY)
-    @Column(insertable = false,updatable = false)
-    private List<ContactoEntity> contactos;
-
-    @OneToMany(targetEntity = TerceroRolEntity.class,mappedBy = "tercero",cascade = {},fetch = FetchType.EAGER)
-    @Column(insertable = false,updatable = false)
-    private List<TerceroRolEntity> roles;
+    private List<TerceroRolTipoTer> roles;
 }

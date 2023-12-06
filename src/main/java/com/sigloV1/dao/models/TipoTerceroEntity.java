@@ -36,4 +36,8 @@ public class TipoTerceroEntity {
     @OneToMany(targetEntity = DocDetallesTipoTerceroEntity.class,mappedBy = "tipoTercero",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
     @Column(insertable = false,updatable = false)
     private List<DocDetallesTipoTerceroEntity> docDetallesTipoTercero;
+
+    @OneToMany(targetEntity = RolTipoTerceroEntity.class,mappedBy = "tipoTercero",cascade = {},fetch = FetchType.LAZY)
+    @Column(insertable = false,updatable = false)
+    private List<RolTipoTerceroEntity> roles;
 }

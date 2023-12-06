@@ -11,22 +11,26 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "contacto_email")
-public class ContactoEmailEntity {
+@Table(name = "tercero_rol_contacto_email")
+public class TerceroRolEmailContEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "id_tercero",referencedColumnName = "id",nullable = false)
+    private TerceroRolTipoTer tercero;
+
+    @ManyToOne
     @JoinColumn(name = "id_email",referencedColumnName = "id",nullable = false)
     private EmailEntity email;
 
     @ManyToOne
-    @JoinColumn(name = "id_contacto",referencedColumnName = "id",nullable = false)
+    @JoinColumn(name = "id_contacto",referencedColumnName = "id")
     private ContactoEntity contacto;
 
-    @NotNull
     @NotBlank
+    @NotNull
     private Boolean estado;
 }

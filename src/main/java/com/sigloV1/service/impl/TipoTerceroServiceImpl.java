@@ -4,7 +4,7 @@ package com.sigloV1.service.impl;
 import com.sigloV1.dao.models.TipoTerceroEntity;
 import com.sigloV1.dao.repositories.TipoTeceroRepository;
 import com.sigloV1.service.interfaces.ITipoTerceroService;
-import com.sigloV1.service.utils.TipoTerceroUtil;
+import com.sigloV1.service.logica.TipoTerceroUtil;
 import com.sigloV1.web.dtos.req.TipoTerceroDTORq;
 import com.sigloV1.web.dtos.res.TipoTerceroDTORs;
 import com.sigloV1.web.exceptions.TypesExceptions.BadRequestCustom;
@@ -13,9 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class TipoTerceroServiceImpl implements ITipoTerceroService {

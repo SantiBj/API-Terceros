@@ -1,4 +1,4 @@
-package com.sigloV1.service.utils;
+package com.sigloV1.service.logica;
 
 import com.sigloV1.dao.models.TipoTerceroEntity;
 import lombok.*;

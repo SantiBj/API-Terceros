@@ -30,7 +30,4 @@ public class RolEntity {
     @ManyToOne
     @JoinColumn(name = "id_tipo_rol",referencedColumnName = "id",nullable = false)
     private TipoRolEntity tipoRol;
-
-    @OneToOne(targetEntity = TerceroRolEntity.class,mappedBy = "rol",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    private List<TerceroRolEntity> terceros;
 }

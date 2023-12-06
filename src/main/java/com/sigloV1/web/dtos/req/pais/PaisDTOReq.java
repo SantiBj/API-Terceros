@@ -1,12 +1,8 @@
 package com.sigloV1.web.dtos.req.pais;
 
-import com.sigloV1.service.utils.MethodRequiredForGeneric;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import com.sigloV1.service.logica.MethodRequiredForGeneric;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-
-import java.util.Set;
 
 @Getter
 @Setter
