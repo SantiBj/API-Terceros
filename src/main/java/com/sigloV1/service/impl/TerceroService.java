@@ -1,7 +1,7 @@
 package com.sigloV1.service.impl;
 
 import com.sigloV1.dao.models.TerceroEntity;
-import com.sigloV1.dao.models.TerceroRolTipoTer;
+import com.sigloV1.dao.models.TerceroRolTipoTerEntity;
 import com.sigloV1.dao.repositories.TerceroRepository;
 import com.sigloV1.dao.repositories.relacionesMaM.TerceroRolTipoTerRepository;
 import com.sigloV1.service.interfaces.adapters.TerceroAdapter;
@@ -16,7 +16,7 @@ public class TerceroService implements TerceroAdapter {
     private TerceroRepository terceroRepository;
 
     @Autowired
-    private TerceroRolTipoTerRepository rolesTerceroRepository;
+    private TerceroRolTipoTerRepository terceroRol;
 
 
     @Override
@@ -25,8 +25,9 @@ public class TerceroService implements TerceroAdapter {
                 .orElseThrow(()->new BadRequestCustom("El tercero no existe"));
     }
 
-    public TerceroRolTipoTer obtenerRolTercero(Long id){
-        return rolesTerceroRepository.findById(id)
+    //busca por el id de la relacion
+    public TerceroRolTipoTerEntity obtenerRolTercero(Long id){
+        return terceroRol.findById(id)
                 .orElseThrow(()->new BadRequestCustom("El tercero no tiene el rol indicado"));
     }
 

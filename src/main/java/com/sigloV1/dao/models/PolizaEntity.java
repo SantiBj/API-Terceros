@@ -40,5 +40,5 @@ public class PolizaEntity {
 
     @ManyToOne
     @JoinColumn(name = "id_aseguradora",referencedColumnName = "id",nullable = false)
-    private TerceroRolTipoTer aseguradora;
+    private TerceroRolTipoTerEntity aseguradora;
 }

@@ -11,7 +11,8 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class EmailResDTO {
-    private Long id;
+    private Long idEmail;
+    private Long idRelacion;
     private String email;
     private Boolean estado;
 }

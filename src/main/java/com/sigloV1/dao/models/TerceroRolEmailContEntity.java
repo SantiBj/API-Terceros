@@ -19,8 +19,8 @@ public class TerceroRolEmailContEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_tercero",referencedColumnName = "id",nullable = false)
-    private TerceroRolTipoTer tercero;
+    @JoinColumn(name = "id_tercero",referencedColumnName = "id")
+    private TerceroRolTipoTerEntity tercero;
 
     @ManyToOne
     @JoinColumn(name = "id_email",referencedColumnName = "id",nullable = false)

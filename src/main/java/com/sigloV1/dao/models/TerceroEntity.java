@@ -67,7 +67,7 @@ public class TerceroEntity {
     @Column(insertable = false,updatable = false)
     private List<TerceroEntity> terceroHijos;
 
-    @OneToMany(targetEntity = TerceroRolTipoTer.class,mappedBy = "tercero",cascade = {},fetch = FetchType.EAGER)
+    @OneToMany(targetEntity = TerceroRolTipoTerEntity.class,mappedBy = "tercero",cascade = {},fetch = FetchType.EAGER)
     @Column(insertable = false,updatable = false)
-    private List<TerceroRolTipoTer> roles;
+    private List<TerceroRolTipoTerEntity> roles;
 }

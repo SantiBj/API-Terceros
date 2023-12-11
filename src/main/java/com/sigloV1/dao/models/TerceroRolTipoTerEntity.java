@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.springframework.context.annotation.EnableMBeanExport;
 
 import java.util.List;
 
@@ -15,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Table(name = "tercero_rol_tipo_tercero")
-public class TerceroRolTipoTer {
+public class TerceroRolTipoTerEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -37,7 +37,7 @@ public class ContratoEntity {
     private Boolean estado;
 
     @ManyToMany(mappedBy = "contratos",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
-    private List<TerceroRolTipoTer> terceros;
+    private List<TerceroRolTipoTerEntity> terceros;
 
     @OneToMany(targetEntity = ContratoModeloEntity.class,mappedBy = "contrato",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<ContratoModeloEntity> modelos;

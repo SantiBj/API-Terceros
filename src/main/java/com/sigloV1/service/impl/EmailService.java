@@ -3,7 +3,7 @@ package com.sigloV1.service.impl;
 import com.sigloV1.dao.models.ContactoEntity;
 import com.sigloV1.dao.models.EmailEntity;
 import com.sigloV1.dao.models.TerceroRolEmailContEntity;
-import com.sigloV1.dao.models.TerceroRolTipoTer;
+import com.sigloV1.dao.models.TerceroRolTipoTerEntity;
 import com.sigloV1.dao.repositories.EmailRepository;
 import com.sigloV1.dao.repositories.relacionesMaM.RelacionesEmailRepository;
 import com.sigloV1.service.interfaces.IEmailService;
@@ -12,12 +12,12 @@ import com.sigloV1.service.logica.contacto.MetodosContacto;
 import com.sigloV1.service.logica.email.MetodosEmail;
 import com.sigloV1.web.dtos.req.email.EmailReqDTO;
 import com.sigloV1.web.dtos.res.email.EmailResDTO;
+import com.sigloV1.web.exceptions.TypesExceptions.BadRequestCustom;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class EmailService implements IEmailService {
@@ -42,13 +42,15 @@ public class EmailService implements IEmailService {
 
 
     @Override
-    public <T> EmailResDTO crearEmailTercero(EmailReqDTO datos, T tercero) {
-        TerceroRolTipoTer roleTercero = tercero instanceof TerceroRolTipoTer ?
-                (TerceroRolTipoTer) tercero : terceroAdapter.obtenerRolTercero((Long) tercero);
+    public <T> EmailResDTO crearEmailTercero(EmailReqDTO datos, T terceroRol) {
+        TerceroRolTipoTerEntity roleTercero = terceroRol instanceof TerceroRolTipoTerEntity ?
+                (TerceroRolTipoTerEntity) terceroRol : terceroAdapter.obtenerRolTercero((Long) terceroRol);
+
+        System.out.println(roleTercero);
 
         EmailEntity email = metodosEmail.emailARelacionar(datos);
 
-        TerceroRolEmailContEntity relacion = relacionesEmailRepository.findByTerceroAndEmail(roleTercero, email).orElseGet(() ->
+        TerceroRolEmailContEntity relacion = relacionesEmailRepository.findByTerceroRolAndEmail(roleTercero, email).orElseGet(() ->
                 relacionesEmailRepository.save(
                         TerceroRolEmailContEntity.builder()
                                 .email(email)
@@ -57,7 +59,8 @@ public class EmailService implements IEmailService {
                         )
                 );
         return EmailResDTO.builder()
-                .id(relacion.getEmail().getId())
+                .idEmail(relacion.getEmail().getId())
+                .idRelacion(relacion.getId())
                 .email(relacion.getEmail().getEmail())
                 .estado(relacion.getEstado())
                 .build();
@@ -81,38 +84,52 @@ public class EmailService implements IEmailService {
                         )
                 );
         return EmailResDTO.builder()
-                .id(relacion.getEmail().getId())
+                .idEmail(relacion.getEmail().getId())
+                .idRelacion(relacion.getId())
                 .email(relacion.getEmail().getEmail())
                 .estado(relacion.getEstado())
                 .build();
     }
 
-    public List<EmailResDTO> obtenerEmailTercero(Long idTercero){
-        return relacionesEmailRepository.findByTercero(terceroAdapter.obtenerTerceroOException(idTercero))
+    // El id sera el de la relacion
+    public List<EmailResDTO> obtenerEmailTerceroRol(Long idTerceroRol){
+        //buscar que la relacion exista en tercero_rol
+        return relacionesEmailRepository.findByTerceroRol(terceroAdapter.obtenerRolTercero(idTerceroRol))
                 .stream().map((email)->{
                     return EmailResDTO.builder()
-                            .id(email.getEmail().getId())
+                            .idRelacion(email.getId())
+                            .idEmail(email.getEmail().getId())
                             .email(email.getEmail().getEmail())
                             .estado(email.getEstado())
                             .build();
                 }).toList();
     }
 
+    // El id sera el de la relacion
     public List<EmailResDTO> obtenerEmailContacto(Long idContacto){
         return relacionesEmailRepository.findByContacto(metodosContacto.obtenerContactoOException(idContacto))
                 .stream().map((email)->{
                     return EmailResDTO.builder()
-                            .id(email.getEmail().getId())
+                            .idEmail(email.getEmail().getId())
+                            .idRelacion(email.getId())
                             .email(email.getEmail().getEmail())
                             .estado(email.getEstado())
                             .build();
                 }).toList();
     }
 
-    public void estadoEmailTercero(Long idTercero,Long idEmail){
-        TerceroRolEmailContEntity relacion = relacionesEmailRepository.findByTerceroAndEmail(
-                terceroAdapter.obtenerTerceroOException(idTercero),
-                metodosEmail.obtenerEmailOException(idEmail)
-        );
+    public void estadoEmailTercero(Long idRelacion,Boolean estado){
+        TerceroRolEmailContEntity relacion = relacionesEmailRepository
+                .findById(idRelacion).orElseThrow(
+                        ()->new BadRequestCustom("La relacion entre el tercero y su rol con el correo no existe."));
+        relacion.setEstado(estado);
+        relacionesEmailRepository.save(relacion);
     }
+
+    public void eliminarRelacionEmail(Long idRelacion){
+        TerceroRolEmailContEntity relacion = relacionesEmailRepository.findById(idRelacion)
+                .orElseThrow(()->new BadRequestCustom("La relacion entre el tercero y su rol con el correo no existe."));
+        relacionesEmailRepository.delete(relacion);
+    }
+
 }

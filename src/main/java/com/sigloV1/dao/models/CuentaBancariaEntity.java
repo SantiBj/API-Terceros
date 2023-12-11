@@ -6,8 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.math.BigInteger;
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -28,11 +26,11 @@ public class CuentaBancariaEntity {
 
     @ManyToOne
     @JoinColumn(name = "id_propietario",referencedColumnName = "id",nullable = false)
-    private TerceroRolTipoTer propietario;
+    private TerceroRolTipoTerEntity propietario;
 
     @ManyToOne
     @JoinColumn(name = "id_banco",referencedColumnName = "id",nullable = false)
-    private TerceroRolTipoTer banco;
+    private TerceroRolTipoTerEntity banco;
 
     @NotBlank
     @NotNull
