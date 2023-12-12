@@ -30,7 +30,6 @@ public class TerceroRolEmailContEntity {
     @JoinColumn(name = "id_contacto",referencedColumnName = "id")
     private ContactoEntity contacto;
 
-    @NotBlank
     @NotNull
     private Boolean estado;
 }

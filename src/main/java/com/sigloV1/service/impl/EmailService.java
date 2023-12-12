@@ -46,15 +46,15 @@ public class EmailService implements IEmailService {
         TerceroRolTipoTerEntity roleTercero = terceroRol instanceof TerceroRolTipoTerEntity ?
                 (TerceroRolTipoTerEntity) terceroRol : terceroAdapter.obtenerRolTercero((Long) terceroRol);
 
-        System.out.println(roleTercero);
 
         EmailEntity email = metodosEmail.emailARelacionar(datos);
 
-        TerceroRolEmailContEntity relacion = relacionesEmailRepository.findByTerceroRolAndEmail(roleTercero, email).orElseGet(() ->
+        TerceroRolEmailContEntity relacion = relacionesEmailRepository.findByTerceroAndEmail(roleTercero, email).orElseGet(() ->
                 relacionesEmailRepository.save(
                         TerceroRolEmailContEntity.builder()
                                 .email(email)
                                 .tercero(roleTercero)
+                                .estado(true)
                                 .build()
                         )
                 );
@@ -94,7 +94,7 @@ public class EmailService implements IEmailService {
     // El id sera el de la relacion
     public List<EmailResDTO> obtenerEmailTerceroRol(Long idTerceroRol){
         //buscar que la relacion exista en tercero_rol
-        return relacionesEmailRepository.findByTerceroRol(terceroAdapter.obtenerRolTercero(idTerceroRol))
+        return relacionesEmailRepository.findByTercero(terceroAdapter.obtenerRolTercero(idTerceroRol))
                 .stream().map((email)->{
                     return EmailResDTO.builder()
                             .idRelacion(email.getId())
