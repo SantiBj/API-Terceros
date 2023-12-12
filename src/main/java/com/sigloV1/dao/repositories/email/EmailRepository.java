@@ -1,4 +1,4 @@
-package com.sigloV1.dao.repositories;
+package com.sigloV1.dao.repositories.email;
 
 
 import com.sigloV1.dao.models.EmailEntity;

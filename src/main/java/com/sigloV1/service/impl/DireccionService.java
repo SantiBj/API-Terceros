@@ -2,26 +2,23 @@ package com.sigloV1.service.impl;
 
 import com.sigloV1.dao.models.*;
 import com.sigloV1.dao.repositories.DireccionRepository;
-import com.sigloV1.dao.repositories.relacionesMaM.DireccionTelefonoRepository;
 import com.sigloV1.dao.repositories.relacionesMaM.TerceroDireccionRepository;
 import com.sigloV1.service.interfaces.IDireccionService;
-import com.sigloV1.service.interfaces.adapters.CiudadAdapter;
-import com.sigloV1.service.interfaces.adapters.direccion.DireccionAdapter;
-import com.sigloV1.service.interfaces.adapters.telefono.TelefonoAdapter;
-import com.sigloV1.service.interfaces.adapters.TerceroAdapter;
+import com.sigloV1.service.adapters.CiudadAdapter;
+import com.sigloV1.service.adapters.direccion.DireccionAdapter;
+import com.sigloV1.service.adapters.telefono.TelefonoAdapter;
+import com.sigloV1.service.adapters.TerceroAdapter;
 import com.sigloV1.web.dtos.req.direccion.DireccionReqDTO;
 import com.sigloV1.web.dtos.req.direccion.DireccionTelefonosReqDTO;
 import com.sigloV1.web.dtos.res.direccion.DireccionResDTO;
 import com.sigloV1.web.dtos.res.direccion.DireccionTelefonosResDTO;
 import com.sigloV1.web.dtos.res.telefono.TelefonoResDTO;
 import com.sigloV1.web.exceptions.TypesExceptions.BadRequestCustom;
-import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class DireccionService implements IDireccionService {

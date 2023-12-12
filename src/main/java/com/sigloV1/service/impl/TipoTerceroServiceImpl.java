@@ -2,7 +2,8 @@ package com.sigloV1.service.impl;
 
 
 import com.sigloV1.dao.models.TipoTerceroEntity;
-import com.sigloV1.dao.repositories.TipoTeceroRepository;
+import com.sigloV1.dao.repositories.tercero.TipoTeceroRepository;
+import com.sigloV1.service.adapters.TipoTerceroAdapter;
 import com.sigloV1.service.interfaces.ITipoTerceroService;
 import com.sigloV1.service.logica.TipoTerceroUtil;
 import com.sigloV1.web.dtos.req.TipoTerceroDTORq;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class TipoTerceroServiceImpl implements ITipoTerceroService {
+public class TipoTerceroServiceImpl implements ITipoTerceroService, TipoTerceroAdapter {
 
     @Autowired
     private ModelMapper modelMapper;

@@ -1,4 +1,4 @@
-package com.sigloV1.service.interfaces.adapters.telefono;
+package com.sigloV1.service.adapters.telefono;
 
 import com.sigloV1.dao.models.*;
 import com.sigloV1.web.dtos.req.telefono.TelefonoReqDTO;

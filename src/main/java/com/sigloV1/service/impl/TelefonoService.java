@@ -5,19 +5,17 @@ import com.sigloV1.dao.repositories.TelefonoRepository;
 import com.sigloV1.dao.repositories.relacionesMaM.DireccionTelefonoRepository;
 import com.sigloV1.dao.repositories.relacionesMaM.TerceroTelefonoRepository;
 import com.sigloV1.service.interfaces.ITelefonoService;
-import com.sigloV1.service.interfaces.adapters.direccion.DireccionAdapter;
-import com.sigloV1.service.interfaces.adapters.telefono.TelefonoAdapter;
-import com.sigloV1.service.interfaces.adapters.TerceroAdapter;
+import com.sigloV1.service.adapters.direccion.DireccionAdapter;
+import com.sigloV1.service.adapters.telefono.TelefonoAdapter;
+import com.sigloV1.service.adapters.TerceroAdapter;
 import com.sigloV1.web.dtos.req.telefono.TelefonoReqDTO;
 import com.sigloV1.web.dtos.res.telefono.TelefonoResDTO;
 import com.sigloV1.web.exceptions.TypesExceptions.BadRequestCustom;
 import jakarta.transaction.Transactional;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TelefonoService implements ITelefonoService {

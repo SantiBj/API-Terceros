@@ -1,4 +1,4 @@
-package com.sigloV1.dao.repositories.relacionesMaM;
+package com.sigloV1.dao.repositories.tercero;
 
 import com.sigloV1.dao.models.TerceroRolTipoTerEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

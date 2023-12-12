@@ -3,7 +3,7 @@ package com.sigloV1.service.impl;
 import com.sigloV1.dao.models.PaisEntity;
 import com.sigloV1.dao.repositories.PaisRepository;
 import com.sigloV1.service.interfaces.IPaisService;
-import com.sigloV1.service.interfaces.adapters.PaisAdapter;
+import com.sigloV1.service.adapters.PaisAdapter;
 import com.sigloV1.web.dtos.req.pais.PaisDTOReq;
 import com.sigloV1.web.dtos.req.pais.PaisDTOReqBi;
 import com.sigloV1.web.dtos.res.pais.PaisDTORes;

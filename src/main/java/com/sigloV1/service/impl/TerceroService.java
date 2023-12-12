@@ -2,9 +2,9 @@ package com.sigloV1.service.impl;
 
 import com.sigloV1.dao.models.TerceroEntity;
 import com.sigloV1.dao.models.TerceroRolTipoTerEntity;
-import com.sigloV1.dao.repositories.TerceroRepository;
-import com.sigloV1.dao.repositories.relacionesMaM.TerceroRolTipoTerRepository;
-import com.sigloV1.service.interfaces.adapters.TerceroAdapter;
+import com.sigloV1.dao.repositories.tercero.TerceroRepository;
+import com.sigloV1.dao.repositories.tercero.TerceroRolTipoTerRepository;
+import com.sigloV1.service.adapters.TerceroAdapter;
 import com.sigloV1.web.exceptions.TypesExceptions.BadRequestCustom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
