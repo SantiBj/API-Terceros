@@ -13,10 +13,12 @@ import lombok.*;
 public class RolReqDTO {
 
     @NotNull
+    private Long id;
+
+    @NotNull
     @NotBlank
     @Size(max = 100)
     private String nombre;
 
-    @NotNull
     private Long tipoRol;
 }

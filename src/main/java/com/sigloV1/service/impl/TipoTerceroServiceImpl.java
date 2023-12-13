@@ -34,9 +34,9 @@ public class TipoTerceroServiceImpl implements ITipoTerceroService, TipoTerceroA
                 .build();
     }
 
-    private TipoTerceroEntity obtenerTerceroOException(Long id) {
+    public TipoTerceroEntity obtenerTerceroOException(Long id) {
         return tipoTeceroRepository.findById(id)
-                .orElseThrow(() -> new BadRequestCustom("El tipo de tercero no existe"));
+                .orElseThrow(() -> new BadRequestCustom("El tipo de tercero "+id+" no existe."));
     }
 
     @Override
