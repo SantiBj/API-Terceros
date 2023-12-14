@@ -30,11 +30,4 @@ public class TelefonoEntity {
     @Enumerated(value = EnumType.STRING)
     @Column(name = "tipo_telefono",nullable = false)
     private ETipoTelefono tipoTelefono;
-
-    @Size(max = 5)
-    private String extension;
-
-    @OneToMany(targetEntity = TerceroTelefonoEntity.class,mappedBy = "telefono",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    private List<TerceroTelefonoEntity> terceroTelefono;
-
 }

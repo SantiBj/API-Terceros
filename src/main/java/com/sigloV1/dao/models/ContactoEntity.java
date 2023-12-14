@@ -36,7 +36,4 @@ public class ContactoEntity {
     @NotBlank
     @NotNull
     private Boolean estado;
-
-    @OneToMany(mappedBy = "contacto", targetEntity = DireccionTelefonoContactoEntity.class, cascade = {}, fetch = FetchType.EAGER)
-    private List<DireccionTelefonoContactoEntity> direccionesTelefonos;
 }

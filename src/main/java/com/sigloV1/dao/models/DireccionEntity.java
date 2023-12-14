@@ -43,8 +43,4 @@ public class DireccionEntity {
     @JoinColumn(name = "id_ciudad",referencedColumnName = "id")
     private CiudadEntity ciudad;
 
-
-    @OneToMany(targetEntity = TerceroDireccionEntity.class,mappedBy = "direccion",cascade = {},fetch = FetchType.LAZY)
-    private List<TerceroDireccionEntity> terceros;
-
 }
