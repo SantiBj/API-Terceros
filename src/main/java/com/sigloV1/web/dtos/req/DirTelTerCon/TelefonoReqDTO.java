@@ -1,4 +1,4 @@
-package com.sigloV1.web.dtos.req.telefono;
+package com.sigloV1.web.dtos.req.DirTelTerCon;
 
 import com.sigloV1.dao.models.ETipoTelefono;
 import jakarta.persistence.EnumType;

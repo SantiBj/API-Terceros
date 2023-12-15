@@ -1,4 +1,4 @@
-package com.sigloV1.dao.repositories;
+package com.sigloV1.dao.repositories.DirTelTerCon;
 
 import com.sigloV1.dao.models.DireccionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,11 +1,6 @@
 package com.sigloV1.web.dtos.req.tercero;
 
-import com.sigloV1.dao.models.DocDetallesEntity;
-import com.sigloV1.dao.models.PaisEntity;
-import com.sigloV1.dao.models.TerceroEntity;
-import com.sigloV1.dao.models.TipoTerceroEntity;
-import com.sigloV1.web.dtos.req.direccion.DireccionTelefonosReqDTO;
-import jakarta.persistence.Column;
+import com.sigloV1.web.dtos.req.DirTelTerCon.DireccionTelefonosReqDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

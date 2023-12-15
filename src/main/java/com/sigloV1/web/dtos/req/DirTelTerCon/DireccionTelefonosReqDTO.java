@@ -1,31 +1,36 @@
-package com.sigloV1.web.dtos.req.direccion;
+package com.sigloV1.web.dtos.req.DirTelTerCon;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class DireccionReqDTO {
+public class DireccionTelefonosReqDTO {
+
     @NotBlank
     @NotNull
-    @Size(max = 100)
+    @Size(min = 3,max = 100)
     private String nombre;
 
     @NotBlank
     @NotNull
-    @Size(max = 255)
+    @Size(min = 3,max = 200)
     private String direccion;
 
     @NotBlank
     @NotNull
-    @Size(max = 20)
+    @Size(min = 3,max = 11)
     private String codigoPostal;
 
     @NotNull
     private Long ciudad;
+
+    private List<TelefonoReqDTO> telefonos;
 }

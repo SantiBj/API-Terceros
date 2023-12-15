@@ -1,4 +1,4 @@
-package com.sigloV1.service.logica.rol;
+package com.sigloV1.service.logica;
 
 import com.sigloV1.dao.models.RolEntity;
 import com.sigloV1.dao.models.RolTipoTerceroEntity;

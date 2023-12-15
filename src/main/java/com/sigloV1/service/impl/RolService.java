@@ -10,7 +10,7 @@ import com.sigloV1.dao.repositories.role.TipoRolRepository;
 import com.sigloV1.service.adapters.TipoTerceroAdapter;
 import com.sigloV1.service.interfaces.rol.IRolesService;
 import com.sigloV1.service.interfaces.rol.ITipoRolService;
-import com.sigloV1.service.logica.rol.LogicRol;
+
 import com.sigloV1.web.dtos.req.rol.RolAsociacionesReqDTO;
 import com.sigloV1.web.dtos.req.rol.RolReqDTO;
 import com.sigloV1.web.dtos.req.rol.TipoRolReqDTO;
@@ -22,7 +22,7 @@ import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.sigloV1.service.logica.LogicRol;
 import java.util.List;
 
 
