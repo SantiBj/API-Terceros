@@ -12,7 +12,6 @@ import java.util.List;
 @Builder
 public class DireccionTelefonosResDTO{
     private Long id;
-    private Long idRelacionTer;
     private String nombre;
     private String direccion;
     private String codigoPostal;

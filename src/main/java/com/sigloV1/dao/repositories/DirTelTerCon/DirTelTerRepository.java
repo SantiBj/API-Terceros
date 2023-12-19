@@ -11,9 +11,13 @@ import java.util.Optional;
 
 @Repository
 public interface DirTelTerRepository extends JpaRepository<DirTelTerEntity,Long> {
+
     Optional<DirTelTerEntity> findByTerceroAndDireccionAndUsadaEnContacto(
             TerceroEntity tercero, DireccionEntity direccion, Boolean usadaEnContacto);
 
     Optional<DirTelTerEntity> findByTerceroAndTelefonoAndUsadaEnContacto(
             TerceroEntity tercero, TelefonoEntity telefono, Boolean usadaEnContacto);
+
+    Optional<DirTelTerEntity> findByTerceroAndTelefonoAndDireccionAndUsadaEnContacto(TerceroEntity tercero,
+                                                                                     TelefonoEntity telefono,DireccionEntity direccion, Boolean usadaEnContacto);
 }

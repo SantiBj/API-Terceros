@@ -3,19 +3,22 @@ package com.sigloV1.web.dtos.req.DirTelTerCon;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class DirOrTelTerDTO {
+public class DireccionIdTelefonosReqDTO {
 
     @NotNull
     private Long idTercero;
 
-    private DireccionReqDTO direccion;
+    @NotNull
+    private Long direccionId;
 
-    private TelefonoReqDTO telefono;
+    private Long contactoId;
 
-    private DireccionTelefonosReqDTO direccionTelefonos;
+    private List<TelefonoReqDTO> telefonos;
 }

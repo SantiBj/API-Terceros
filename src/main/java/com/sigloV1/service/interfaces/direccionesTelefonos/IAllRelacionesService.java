@@ -1,6 +1,6 @@
 package com.sigloV1.service.interfaces.direccionesTelefonos;
 
-import com.sigloV1.web.dtos.req.DirTelTerCon.DirOrTelTerDTO;
+import com.sigloV1.web.dtos.req.DirTelTerCon.DatosDeContactoDTO;
 import com.sigloV1.web.dtos.req.DirTelTerCon.EDato;
 import com.sigloV1.web.dtos.res.dirTelTerCon.DireccionTelefonosResDTO;
 import com.sigloV1.web.dtos.res.dirTelTerCon.TelefonoResDTO;
@@ -21,8 +21,5 @@ public interface IAllRelacionesService {
     //desactivar telefono
     void estadoDatosTercero(EDato dato,Long relacionId);
 
-    void estadoDatosContacto(EDato dato,Long idRelacionContacto);
-
-    //crear direcciones independiente o telefono independiente o relacionado con tercero
-    void crearDirOrTelefonoTer(DirOrTelTerDTO data,Boolean isContacto);
+    void crearDatosDeContacto(DatosDeContactoDTO datos);
 }

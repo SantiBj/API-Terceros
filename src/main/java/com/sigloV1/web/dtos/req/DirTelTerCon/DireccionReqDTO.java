@@ -21,6 +21,12 @@ public class DireccionReqDTO {
     @Size(max = 255)
     private String direccion;
 
+    @NotNull
+    private Long terceroId;
+
+
+    private Long contactoId;
+
     @NotBlank
     @NotNull
     @Size(max = 20)

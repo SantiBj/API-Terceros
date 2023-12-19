@@ -1,11 +1,9 @@
 package com.sigloV1.service.impl.DirTelTerCon;
 
-import com.sigloV1.dao.repositories.DirTelTerCon.DirTelTerConRepository;
 import com.sigloV1.dao.repositories.DirTelTerCon.DirTelTerRepository;
 import com.sigloV1.service.interfaces.direccionesTelefonos.IAllRelacionesService;
-import com.sigloV1.service.logica.DirTelTerCont.Logic;
-import com.sigloV1.web.dtos.req.DirTelTerCon.DirOrTelTerDTO;
-import com.sigloV1.web.dtos.req.DirTelTerCon.EDato;
+import com.sigloV1.service.logica.DirTelTerCont.LogicCreacion;
+import com.sigloV1.web.dtos.req.DirTelTerCon.*;
 import com.sigloV1.web.dtos.res.dirTelTerCon.DireccionTelefonosResDTO;
 import com.sigloV1.web.dtos.res.dirTelTerCon.TelefonoResDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +18,8 @@ public class AllRelacionesService implements IAllRelacionesService {
     private DirTelTerRepository dirTelTerRepository;
 
     @Autowired
-    private DirTelTerConRepository dirTelTerConRepository;
+    private LogicCreacion logicCreacion;
 
-    @Autowired
-    private Logic logic;
 
     @Override
     public List<DireccionTelefonosResDTO> direccionesTercero(Long idTercero) {
@@ -45,24 +41,16 @@ public class AllRelacionesService implements IAllRelacionesService {
 
     }
 
-    @Override
-    public void estadoDatosContacto(EDato dato, Long idRelacionContacto) {
-
-    }
-
-    @Override
-    public void crearDirOrTelefonoTer(DirOrTelTerDTO data, Boolean isContacto) {
-        if (data.getDireccion() != null && data.getTelefono() == null
-                && data.getDireccionTelefonos() == null ){
-            logic.crearDireccionAndRelacionar(data.getDireccion(), data.getIdTercero(), isContacto);
-        }else if (data.getDireccion() == null && data.getTelefono() != null
-                && data.getDireccionTelefonos() == null ){
-            logic.crearTelefonoAndRelacionar(data.getTelefono(), data.getIdTercero(), isContacto);
-        }else if (data.getDireccion() == null && data.getTelefono() == null
-                && data.getDireccionTelefonos() != null && !isContacto ){
-            logic.crearDireccionAndTelefonosAndRelacionar(data.getDireccionTelefonos(),data.getIdTercero());
-        }else if (data.getDireccion() == null && data.getTelefono() == null && data.getDireccionTelefonos() != null && isContacto){
-            //aca la de contacto
+    public void crearDatosDeContacto(DatosDeContactoDTO datos){
+        if (datos.getDireccion() != null){
+            logicCreacion.crearDireccionAsociarTercero(datos.getDireccion());
+        }else if(datos.getTelefono() != null){
+            logicCreacion.crearTelefonoAsociarTercero(datos.getTelefono());
+        }else if(datos.getDireccionTelefonos() != null){
+            logicCreacion.crearTelefonosAsociarNuevaDireccion(datos.getDireccionTelefonos());
+        }else if(datos.getDireccionIdTelefonos() != null){
+            logicCreacion.crearTelefonosAsociarDireccionExistente(datos.getDireccionIdTelefonos());
         }
     }
+
 }

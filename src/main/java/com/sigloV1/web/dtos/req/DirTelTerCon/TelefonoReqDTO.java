@@ -22,6 +22,11 @@ public class TelefonoReqDTO {
     @Enumerated(value = EnumType.STRING)
     private ETipoTelefono tipoTelefono;
 
+    @NotNull
+    private Long terceroId;
+
+    private Long contactoId;
+
     @Size(max = 5)
     private String extension;
 

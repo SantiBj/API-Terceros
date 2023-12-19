@@ -14,6 +14,9 @@ import java.util.List;
 @Builder
 public class DireccionTelefonosReqDTO {
 
+    @NotNull
+    private Long terceroId;
+
     @NotBlank
     @NotNull
     @Size(min = 3,max = 100)
@@ -31,6 +34,8 @@ public class DireccionTelefonosReqDTO {
 
     @NotNull
     private Long ciudad;
+
+    private Long contactoId;
 
     private List<TelefonoReqDTO> telefonos;
 }

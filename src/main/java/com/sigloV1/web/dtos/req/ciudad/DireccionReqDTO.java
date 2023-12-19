@@ -21,4 +21,5 @@ public class DireccionReqDTO {
     @NotNull
     @NotBlank
     private String codigoPostal;
+
 }
