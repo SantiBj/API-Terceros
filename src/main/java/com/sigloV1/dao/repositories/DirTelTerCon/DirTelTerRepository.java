@@ -18,6 +18,7 @@ public interface DirTelTerRepository extends JpaRepository<DirTelTerEntity,Long>
     Optional<DirTelTerEntity> findByTerceroAndTelefonoAndUsadaEnContacto(
             TerceroEntity tercero, TelefonoEntity telefono, Boolean usadaEnContacto);
 
-    Optional<DirTelTerEntity> findByTerceroAndTelefonoAndDireccionAndUsadaEnContacto(TerceroEntity tercero,
-                                                                                     TelefonoEntity telefono,DireccionEntity direccion, Boolean usadaEnContacto);
+   DirTelTerEntity findByTerceroAndTelefonoAndDireccionAndUsadaEnContacto(
+            TerceroEntity tercero, TelefonoEntity telefono, DireccionEntity direccion, Boolean usadaEnContacto);
+
 }

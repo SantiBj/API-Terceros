@@ -33,8 +33,10 @@ public class TelefonoService implements ITelefonoService {
                     .build();
         }else{
             return ReturnCustomTelefono.builder()
-                    .telefono(telefonoRepository.save(modelMapper
-                            .map(dataTelefono,TelefonoEntity.class)))
+                    .telefono(telefonoRepository.save(TelefonoEntity.builder()
+                                    .numero(dataTelefono.getNumero())
+                                    .tipoTelefono(dataTelefono.getTipoTelefono())
+                            .build()))
                     .alReadyExisted(false)
                     .build();
         }

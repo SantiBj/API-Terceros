@@ -26,7 +26,7 @@ public class DirTelTerEntity {
     @JoinColumn(name = "id_telefono",referencedColumnName = "id")
     private TelefonoEntity telefono;
 
-    @NotNull
+
     @Column(name = "estado_telefono")
     private Boolean estadoTelefono;
 
@@ -37,7 +37,7 @@ public class DirTelTerEntity {
     @JoinColumn(name = "id_direccion",referencedColumnName = "id")
     private DireccionEntity direccion;
 
-    @NotNull
+
     @Column(name = "estado_direccion")
     private Boolean estadoDireccion;
 

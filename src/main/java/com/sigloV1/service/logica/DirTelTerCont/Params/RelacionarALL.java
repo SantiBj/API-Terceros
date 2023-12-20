@@ -17,7 +17,7 @@ public class RelacionarALL {
     private DireccionEntity direccion;
     private List<TelefonoParams> telefonos;
 
-    private Boolean usadaComoContacto;
+    private Long usadaComoContacto;
 
     private TerceroEntity tercero;
 }
