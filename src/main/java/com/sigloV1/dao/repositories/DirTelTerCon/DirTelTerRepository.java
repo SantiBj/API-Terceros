@@ -7,15 +7,16 @@ import com.sigloV1.dao.models.TerceroEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface DirTelTerRepository extends JpaRepository<DirTelTerEntity,Long> {
 
-    Optional<DirTelTerEntity> findByTerceroAndDireccionAndUsadaEnContacto(
+    List<DirTelTerEntity> findByTerceroAndDireccionAndUsadaEnContacto(
             TerceroEntity tercero, DireccionEntity direccion, Boolean usadaEnContacto);
 
-    Optional<DirTelTerEntity> findByTerceroAndTelefonoAndUsadaEnContacto(
+    List<DirTelTerEntity> findByTerceroAndTelefonoAndUsadaEnContacto(
             TerceroEntity tercero, TelefonoEntity telefono, Boolean usadaEnContacto);
 
    DirTelTerEntity findByTerceroAndTelefonoAndDireccionAndUsadaEnContacto(
