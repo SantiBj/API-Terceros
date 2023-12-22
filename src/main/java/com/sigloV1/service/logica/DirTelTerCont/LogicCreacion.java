@@ -11,6 +11,7 @@ import com.sigloV1.service.interfaces.direccionesTelefonos.IDireccionService;
 import com.sigloV1.service.interfaces.direccionesTelefonos.ITelefonoService;
 import com.sigloV1.service.logica.DirTelTerCont.Params.RelacionarALL;
 import com.sigloV1.service.logica.DirTelTerCont.Params.TelefonoParams;
+import com.sigloV1.service.logica.contacto.MetodosContacto;
 import com.sigloV1.web.dtos.req.DirTelTerCon.DireccionIdTelefonosReqDTO;
 import com.sigloV1.web.dtos.req.DirTelTerCon.DireccionReqDTO;
 import com.sigloV1.web.dtos.req.DirTelTerCon.DireccionTelefonosReqDTO;
@@ -47,15 +48,16 @@ public class LogicCreacion {
     private ContactoRepository contactoRepository;
 
     @Autowired
+    private MetodosContacto metodosContacto;
+
+    @Autowired
     private DirTelTerConRepository relacionesContactoRep;
 
 
-    public <T> void asociarDatosConContacto(DirTelTerEntity relacion, T contactoParam){
+    public <T> void asociarDatosConContacto(DirTelTerEntity relacion, T contactoParam) {
 
-        ContactoEntity contacto = contactoParam instanceof ContactoEntity ? (ContactoEntity) contactoParam:
-                contactoRepository.findById((Long) contactoParam).orElseThrow(
-                () -> new BadRequestCustom("El contacto no existe"));
-
+        ContactoEntity contacto = contactoParam instanceof ContactoEntity ? (ContactoEntity) contactoParam :
+                metodosContacto.obtenerContactoOException((Long) contactoParam);
 
         relacionesContactoRep
                 .findByDireccionTelefonoAndContacto(relacion, contacto)
@@ -63,32 +65,34 @@ public class LogicCreacion {
                         relacionesContactoRep.save(
                                 DirTelTerContEntity.builder()
                                         .direccionTelefono(relacion)
+                                        .estadoDireccion(relacion.getDireccion() != null)
+                                        .estadoTelefono(relacion.getTelefono() != null)
                                         .contacto(contacto)
                                         .build()
                         )
                 ));
     }
 
-    //casos en que un contacto use varias veces la misma relacion
-    public void crearDireccionAsociarTercero(DireccionReqDTO data){
+
+    public void crearDireccionAsociarTercero(DireccionReqDTO data) {
         boolean isContacto = data.getContactoId() != null;
         ReturnCustomDireccion direccionNueva = direccionService.crearDireccion(data);
         TerceroEntity terceroEntity = terceroAdapter.obtenerTerceroOException(data.getTerceroId());
 
 
-        if(isContacto){
-            ContactoEntity contacto = contactoRepository.findById(data.getContactoId())
-                    .orElseThrow(()->new BadRequestCustom("El contacto no existe"));
+        if (isContacto) {
+            ContactoEntity contacto = metodosContacto
+                    .obtenerContactoOException(data.getContactoId());
 
             List<DirTelTerEntity> relacionesDelContacto = dirTelTerRepository
-                    .relacionesDirTerComoContacto(terceroEntity,direccionNueva.getDireccion());
+                    .relacionesDirTerComoContacto(terceroEntity, direccionNueva.getDireccion());
 
-            if (!relacionesDelContacto.isEmpty()){
-                relacionesDelContacto.forEach(r->{
-                    if (r.getTelefono() != null){
+            if (!relacionesDelContacto.isEmpty()) {
+                relacionesDelContacto.forEach(r -> {
+                    if (r.getTelefono() != null) {
                         Optional<DirTelTerContEntity> relacion = relacionesContactoRep
-                                .findByDireccionTelefonoAndContacto(r,contacto);
-                        if (relacion.isPresent()){
+                                .findByDireccionTelefonoAndContacto(r, contacto);
+                        if (relacion.isPresent()) {
                             throw new BadRequestCustom("La direccion ya se encuentra asociada con el contacto");
                         }
                     }
@@ -97,23 +101,22 @@ public class LogicCreacion {
 
             DirTelTerEntity relacion = dirTelTerRepository
                     .findByTerceroAndTelefonoAndDireccionAndUsadaEnContacto(
-                            terceroEntity,null,direccionNueva.getDireccion(),true);
+                            terceroEntity, null, direccionNueva.getDireccion(), true);
 
             asociarDatosConContacto(Objects.requireNonNullElseGet(relacion, () -> dirTelTerRepository.save(
                     DirTelTerEntity.builder()
                             .direccion(direccionNueva.getDireccion())
                             .tercero(terceroEntity)
-                            .estadoDireccion(true)
                             .usadaEnContacto(data.getContactoId() != null)
                             .build()
             )), contacto);
-        }else{
+        } else {
             DirTelTerEntity relacion = dirTelTerRepository.findByTerceroAndDireccionAndUsadaEnContacto(
                     terceroEntity, direccionNueva.getDireccion(), false);
 
-            if (relacion != null){
+            if (relacion != null) {
                 throw new BadRequestCustom("La relacion entre la direccion y el tercero ya existe");
-            }else{
+            } else {
                 dirTelTerRepository.save(
                         DirTelTerEntity.builder()
                                 .direccion(direccionNueva.getDireccion())
@@ -126,48 +129,60 @@ public class LogicCreacion {
         }
     }
 
-
-    public void crearTelefonoAsociarTercero(TelefonoReqDTO data){}
-
-    /*
-    //corregir este mismo
-    public void crearTelefonoAsociarTercero(TelefonoReqDTO data){
-
+    public void crearTelefonoAsociarTercero(TelefonoReqDTO data) {
+        boolean isContacto = data.getContactoId() != null;
         ReturnCustomTelefono telefonoNuevo = telefonoService.crearTelefono(data);
         TerceroEntity terceroEntity = terceroAdapter.obtenerTerceroOException(data.getTerceroId());
 
-        //validar para que no me cree dos relaciones por ejemplo una direccion suelta y otra con valor
+        if (isContacto) {
+            ContactoEntity contacto = metodosContacto
+                    .obtenerContactoOException(data.getContactoId());
+            List<DirTelTerEntity> relacionesDelContacto = dirTelTerRepository
+                    .relacionesTelTerComoContacto(terceroEntity, telefonoNuevo.getTelefono());
 
-        List<DirTelTerEntity> relacion = dirTelTerRepository.findByTerceroAndTelefonoAndUsadaEnContacto(
-                terceroEntity,telefonoNuevo.getTelefono(),data.getContactoId() != null
-        );
-
-        if (!relacion.isEmpty()) {
-            if (data.getContactoId() != null){
-                asociarDatosConContacto(relacion.get(0),data.getContactoId());
-            }else{
-                throw new BadRequestCustom("La relacion entre el telefono y el tercero ya existe");
+            if (!relacionesDelContacto.isEmpty()) {
+                relacionesDelContacto.forEach(r -> {
+                    if (r.getDireccion() != null) {
+                        Optional<DirTelTerContEntity> relacion = relacionesContactoRep
+                                .findByDireccionTelefonoAndContacto(r, contacto);
+                        if (relacion.isPresent()) {
+                            throw new BadRequestCustom("El telefono ya se encuentra asociado con el contacto");
+                        }
+                    }
+                });
             }
-        }else{
-            if (data.getContactoId()!= null){
-                asociarDatosConContacto(DirTelTerEntity.builder()
-                        .telefono(telefonoNuevo.getTelefono())
-                        .tercero(terceroEntity)
-                        .estadoTelefono(true)
-                        .extension(data.getExtension())
-                        .usadaEnContacto(data.getContactoId() != null)
-                        .build(),data.getContactoId());
-            }else{
-                DirTelTerEntity.builder()
-                        .telefono(telefonoNuevo.getTelefono())
-                        .tercero(terceroEntity)
-                        .estadoTelefono(true)
-                        .extension(data.getExtension())
-                        .usadaEnContacto(data.getContactoId() != null)
-                        .build();
+
+            DirTelTerEntity relacion = dirTelTerRepository
+                    .findByTerceroAndTelefonoAndDireccionAndUsadaEnContacto(
+                            terceroEntity, telefonoNuevo.getTelefono(), null, true);
+
+            asociarDatosConContacto(Objects.requireNonNullElseGet(relacion, () -> dirTelTerRepository.save(
+                    DirTelTerEntity.builder()
+                            .telefono(telefonoNuevo.getTelefono())
+                            .tercero(terceroEntity)
+                            .usadaEnContacto(data.getContactoId() != null)
+                            .build()
+            )), contacto);
+
+        } else {
+            DirTelTerEntity relacion = dirTelTerRepository
+                    .findByTerceroAndTelefonoAndUsadaEnContacto(terceroEntity,
+                            telefonoNuevo.getTelefono(), false);
+
+            if (relacion != null) {
+                throw new BadRequestCustom("La relacion entre el telefono y el tercero ya existe");
+            } else {
+                dirTelTerRepository.save(
+                        DirTelTerEntity.builder()
+                                .telefono(telefonoNuevo.getTelefono())
+                                .tercero(terceroEntity)
+                                .estadoTelefono(true)
+                                .usadaEnContacto(data.getContactoId() != null)
+                                .build()
+                );
             }
         }
-    }*/
+    }
 
     public void crearTelefonosAsociarNuevaDireccion(DireccionTelefonosReqDTO dataDireccion) {
 
@@ -219,42 +234,40 @@ public class LogicCreacion {
     }
 
 
-    //funcion de relacion
 
-
-    public void relacionarDireccionAndTelefonosAndTercero(RelacionarALL data){
+    public void relacionarDireccionAndTelefonosAndTercero(RelacionarALL data) {
 
         Boolean isContacto = data.getUsadaComoContacto() != null;
 
         List<DirTelTerEntity> relaciones = data.getTelefonos().stream()
-                .map(t->{
+                .map(t -> {
                     DirTelTerEntity relacionPreviaDireccion = dirTelTerRepository
                             .findByTerceroAndTelefonoAndDireccionAndUsadaEnContacto(
-                                    data.getTercero(),t.getTelefono(),data.getDireccion(),isContacto
+                                    data.getTercero(), t.getTelefono(), data.getDireccion(), isContacto
                             );
 
-                    if (relacionPreviaDireccion != null){
+                    if (relacionPreviaDireccion != null) {
                         return relacionPreviaDireccion;
                     }
 
 
                     DirTelTerEntity relacionPreviaTercero = dirTelTerRepository
                             .findByTerceroAndTelefonoAndDireccionAndUsadaEnContacto(
-                            data.getTercero(),t.getTelefono(),null,isContacto
-                    );
+                                    data.getTercero(), t.getTelefono(), null, isContacto
+                            );
 
-                    if (relacionPreviaTercero != null && !isContacto){
+                    if (relacionPreviaTercero != null && !isContacto) {
                         relacionPreviaTercero.setDireccion(data.getDireccion());
                         relacionPreviaTercero.setEstadoDireccion(true);
                         return dirTelTerRepository.save(relacionPreviaTercero);
-                    } else{
+                    } else {
                         return dirTelTerRepository.save(
                                 DirTelTerEntity.builder()
                                         .tercero(data.getTercero())
                                         .telefono(t.getTelefono())
                                         .direccion(data.getDireccion())
-                                        .estadoDireccion(true)
-                                        .estadoTelefono(true)
+                                        .estadoDireccion(isContacto ? null:true )
+                                        .estadoTelefono(isContacto ? null: true)
                                         .extension(t.getExtension())
                                         .usadaEnContacto(isContacto)
                                         .build()
@@ -263,61 +276,62 @@ public class LogicCreacion {
                 }).toList();
 
 
-        if (isContacto){
+        if (isContacto) {
             ContactoEntity contacto = contactoRepository.findById(data.getUsadaComoContacto()).orElseThrow(
                     () -> new BadRequestCustom("El contacto no existe"));
 
-            relaciones.forEach(r->{
-                DirTelTerEntity relPrevTelefonoTer = dirTelTerRepository.findByTerceroAndTelefonoAndDireccionAndUsadaEnContacto(
+            relaciones.forEach(r -> {
+                DirTelTerEntity relPrevTelefonoTer = dirTelTerRepository
+                        .findByTerceroAndTelefonoAndDireccionAndUsadaEnContacto(
                         data.getTercero(),
                         r.getTelefono(),
                         null,
                         true
                 );
 
-                if (relPrevTelefonoTer != null){
-                   Optional<DirTelTerContEntity> relacionTelConThisCont = relacionesContactoRep
-                           .findByDireccionTelefonoAndContacto(relPrevTelefonoTer,contacto);
+                if (relPrevTelefonoTer != null) {
+                    Optional<DirTelTerContEntity> relacionTelConThisCont = relacionesContactoRep
+                            .findByDireccionTelefonoAndContacto(relPrevTelefonoTer, contacto);
 
-                   if (relacionTelConThisCont.isPresent()){
-                       List<DirTelTerContEntity> contactosUsandoRelacion = relacionesContactoRep
-                               .findByDireccionTelefono(relPrevTelefonoTer);
+                    if (relacionTelConThisCont.isPresent()) {
+                        List<DirTelTerContEntity> contactosUsandoRelacion = relacionesContactoRep
+                                .findByDireccionTelefono(relPrevTelefonoTer);
 
-                       relacionesContactoRep.delete(relacionTelConThisCont.get());
-                       if (contactosUsandoRelacion.size() == 1){
-                           dirTelTerRepository.delete(relPrevTelefonoTer);
-                       }
-                   }
+                        relacionesContactoRep.delete(relacionTelConThisCont.get());
+                        if (contactosUsandoRelacion.size() == 1) {
+                            dirTelTerRepository.delete(relPrevTelefonoTer);
+                        }
+                    }
                 }
 
-                asociarDatosConContacto(r,contacto);
+                asociarDatosConContacto(r, contacto);
             });
         }
 
         DirTelTerEntity relacionDireccionTer = dirTelTerRepository
                 .findByTerceroAndTelefonoAndDireccionAndUsadaEnContacto
-                        (data.getTercero(),null,data.getDireccion()
-                        ,isContacto);
+                        (data.getTercero(), null, data.getDireccion()
+                                , isContacto);
 
 
-        if (relacionDireccionTer != null){
-            if (isContacto){
+        if (relacionDireccionTer != null) {
+            if (isContacto) {
                 ContactoEntity contacto = contactoRepository.findById(data.getUsadaComoContacto()).orElseThrow(
                         () -> new BadRequestCustom("El contacto no existe"));
 
                 Optional<DirTelTerContEntity> relacionDirConThisCont = relacionesContactoRep
-                        .findByDireccionTelefonoAndContacto(relacionDireccionTer,contacto);
+                        .findByDireccionTelefonoAndContacto(relacionDireccionTer, contacto);
 
-                if (relacionDirConThisCont.isPresent()){
+                if (relacionDirConThisCont.isPresent()) {
                     List<DirTelTerContEntity> contUsandoRelacion = relacionesContactoRep
                             .findByDireccionTelefono(relacionDireccionTer);
 
                     relacionesContactoRep.delete(relacionDirConThisCont.get());
-                    if (contUsandoRelacion.size() == 1){
+                    if (contUsandoRelacion.size() == 1) {
                         dirTelTerRepository.delete(relacionDireccionTer);
                     }
                 }
-            }else{
+            } else {
                 dirTelTerRepository.delete(relacionDireccionTer);
             }
         }

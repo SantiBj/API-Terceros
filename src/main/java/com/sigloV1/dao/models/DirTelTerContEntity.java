@@ -25,4 +25,9 @@ public class DirTelTerContEntity {
     @ManyToOne
     @JoinColumn(name = "id_contacto",referencedColumnName = "id",nullable = false)
     private ContactoEntity contacto;
+
+
+    private Boolean estadoDireccion;
+
+    private Boolean estadoTelefono;
 }
