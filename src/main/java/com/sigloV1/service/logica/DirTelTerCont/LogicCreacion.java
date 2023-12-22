@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -70,33 +71,48 @@ public class LogicCreacion {
 
     //casos en que un contacto use varias veces la misma relacion
     public void crearDireccionAsociarTercero(DireccionReqDTO data){
+        boolean isContacto = data.getContactoId() != null;
         ReturnCustomDireccion direccionNueva = direccionService.crearDireccion(data);
         TerceroEntity terceroEntity = terceroAdapter.obtenerTerceroOException(data.getTerceroId());
 
-        List<DirTelTerEntity> relaciones = dirTelTerRepository.findByTerceroAndDireccionAndUsadaEnContacto(
-                terceroEntity, direccionNueva.getDireccion(), data.getContactoId() != null);
 
-        Optional<DirTelTerEntity> relacion = relaciones.stream()
-                .filter(r->r.getTelefono() == null)
-                .findFirst();
+        if(isContacto){
+            ContactoEntity contacto = contactoRepository.findById(data.getContactoId())
+                    .orElseThrow(()->new BadRequestCustom("El contacto no existe"));
 
+            List<DirTelTerEntity> relacionesDelContacto = dirTelTerRepository
+                    .relacionesDirTerComoContacto(terceroEntity,direccionNueva.getDireccion());
 
-        if (!relaciones.isEmpty() && relacion.isPresent()){
-            if (data.getContactoId() != null){
-                asociarDatosConContacto(relacion.get(),data.getContactoId());
-            }else{
-               throw new BadRequestCustom("La relacion entre la direccion y el tercero ya existe");
+            if (!relacionesDelContacto.isEmpty()){
+                relacionesDelContacto.forEach(r->{
+                    if (r.getTelefono() != null){
+                        Optional<DirTelTerContEntity> relacion = relacionesContactoRep
+                                .findByDireccionTelefonoAndContacto(r,contacto);
+                        if (relacion.isPresent()){
+                            throw new BadRequestCustom("La direccion ya se encuentra asociada con el contacto");
+                        }
+                    }
+                });
             }
+
+            DirTelTerEntity relacion = dirTelTerRepository
+                    .findByTerceroAndTelefonoAndDireccionAndUsadaEnContacto(
+                            terceroEntity,null,direccionNueva.getDireccion(),true);
+
+            asociarDatosConContacto(Objects.requireNonNullElseGet(relacion, () -> dirTelTerRepository.save(
+                    DirTelTerEntity.builder()
+                            .direccion(direccionNueva.getDireccion())
+                            .tercero(terceroEntity)
+                            .estadoDireccion(true)
+                            .usadaEnContacto(data.getContactoId() != null)
+                            .build()
+            )), contacto);
         }else{
-            if (data.getContactoId() != null){
-                asociarDatosConContacto(dirTelTerRepository.save(
-                        DirTelTerEntity.builder()
-                                .direccion(direccionNueva.getDireccion())
-                                .tercero(terceroEntity)
-                                .estadoDireccion(true)
-                                .usadaEnContacto(data.getContactoId() != null)
-                                .build()
-                ),data.getContactoId());
+            DirTelTerEntity relacion = dirTelTerRepository.findByTerceroAndDireccionAndUsadaEnContacto(
+                    terceroEntity, direccionNueva.getDireccion(), false);
+
+            if (relacion != null){
+                throw new BadRequestCustom("La relacion entre la direccion y el tercero ya existe");
             }else{
                 dirTelTerRepository.save(
                         DirTelTerEntity.builder()
@@ -110,6 +126,10 @@ public class LogicCreacion {
         }
     }
 
+
+    public void crearTelefonoAsociarTercero(TelefonoReqDTO data){}
+
+    /*
     //corregir este mismo
     public void crearTelefonoAsociarTercero(TelefonoReqDTO data){
 
@@ -147,7 +167,7 @@ public class LogicCreacion {
                         .build();
             }
         }
-    }
+    }*/
 
     public void crearTelefonosAsociarNuevaDireccion(DireccionTelefonosReqDTO dataDireccion) {
 
