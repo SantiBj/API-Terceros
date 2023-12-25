@@ -14,6 +14,8 @@ public interface DirTelTerConRepository extends JpaRepository<DirTelTerContEntit
 
     List<DirTelTerContEntity> findByDireccionTelefono(DirTelTerEntity direccionTelefono);
 
+    List<DirTelTerContEntity> findByContacto(ContactoEntity contacto);
+
     Optional<DirTelTerContEntity> findByDireccionTelefonoAndContacto(DirTelTerEntity direccionTelefono, ContactoEntity contacto);
 
 }

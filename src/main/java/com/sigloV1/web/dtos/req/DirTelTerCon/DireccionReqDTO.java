@@ -14,7 +14,7 @@ public class DireccionReqDTO {
     @NotBlank
     @NotNull
     @Size(max = 100)
-    private String nombre;
+    private String nombreDireccion;
 
     @NotBlank
     @NotNull

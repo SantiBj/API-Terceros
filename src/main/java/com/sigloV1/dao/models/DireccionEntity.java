@@ -23,12 +23,6 @@ public class DireccionEntity {
 
     @NotBlank
     @NotNull
-    @Size(min = 3,max = 100)
-    @Column(nullable = false)
-    private String nombre;
-
-    @NotBlank
-    @NotNull
     @Size(min = 3,max = 200)
     @Column(nullable = false,unique = true)
     private String direccion;

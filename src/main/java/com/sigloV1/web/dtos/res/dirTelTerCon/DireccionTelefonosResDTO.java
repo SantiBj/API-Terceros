@@ -10,12 +10,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+//si la relacionId esta nula es porque tiene telefonos asignados
 public class DireccionTelefonosResDTO{
     private Long id;
+    private Long relacionId;
     private String nombre;
     private String direccion;
     private String codigoPostal;
-    private Long ciudad;
+    private String ciudad;
     private List<TelefonoResDTO> telefonos;
     private Boolean estado;
 }

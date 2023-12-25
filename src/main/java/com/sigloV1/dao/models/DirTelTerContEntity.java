@@ -26,6 +26,7 @@ public class DirTelTerContEntity {
     @JoinColumn(name = "id_contacto",referencedColumnName = "id",nullable = false)
     private ContactoEntity contacto;
 
+    private String nombreDireccion;
 
     private Boolean estadoDireccion;
 

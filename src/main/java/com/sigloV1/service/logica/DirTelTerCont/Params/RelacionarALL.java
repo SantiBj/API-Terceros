@@ -19,5 +19,7 @@ public class RelacionarALL {
 
     private Long usadaComoContacto;
 
+    private String nombreDireccion;
+
     private TerceroEntity tercero;
 }
