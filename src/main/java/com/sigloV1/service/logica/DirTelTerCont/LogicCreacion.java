@@ -81,6 +81,7 @@ public class LogicCreacion {
 
 
         if (isContacto) {
+
             ContactoEntity contacto = metodosContacto
                     .obtenerContactoOException(data.getContactoId());
 
@@ -100,8 +101,8 @@ public class LogicCreacion {
             }
 
             DirTelTerEntity relacion = dirTelTerRepository
-                    .findByTerceroAndTelefonoAndDireccionAndUsadaEnContacto(
-                            terceroEntity, null, direccionNueva.getDireccion(), true);
+                    .findByTerceroAndTelefonoAndDireccionAndUsadaEnContactoAndExtension(
+                            terceroEntity, null, direccionNueva.getDireccion(), true,null);
 
             asociarDatosConContacto(Objects.requireNonNullElseGet(relacion, () -> dirTelTerRepository.save(
                     DirTelTerEntity.builder()
@@ -111,10 +112,11 @@ public class LogicCreacion {
                             .build()
             )), contacto);
         } else {
-            DirTelTerEntity relacion = dirTelTerRepository.findByTerceroAndDireccionAndUsadaEnContacto(
+            //la relacion puede estar varias veces ya que la direccion puede estar multiples veces
+            List<DirTelTerEntity> relaciones = dirTelTerRepository.findByTerceroAndDireccionAndUsadaEnContacto(
                     terceroEntity, direccionNueva.getDireccion(), false);
 
-            if (relacion != null) {
+            if (!relaciones.isEmpty()) {
                 throw new BadRequestCustom("La relacion entre la direccion y el tercero ya existe");
             } else {
                 dirTelTerRepository.save(
@@ -129,6 +131,7 @@ public class LogicCreacion {
         }
     }
 
+    //crear el telefono sin relacion con direccion
     public void crearTelefonoAsociarTercero(TelefonoReqDTO data) {
         boolean isContacto = data.getContactoId() != null;
         ReturnCustomTelefono telefonoNuevo = telefonoService.crearTelefono(data);
@@ -137,8 +140,10 @@ public class LogicCreacion {
         if (isContacto) {
             ContactoEntity contacto = metodosContacto
                     .obtenerContactoOException(data.getContactoId());
+
+            //aca traera el telefono sin importar si tiene relacion con direccion o no
             List<DirTelTerEntity> relacionesDelContacto = dirTelTerRepository
-                    .relacionesTelTerComoContacto(terceroEntity, telefonoNuevo.getTelefono());
+                    .relacionesTelExtTerComoContacto(terceroEntity, telefonoNuevo.getTelefono(),data.getExtension());
 
             if (!relacionesDelContacto.isEmpty()) {
                 relacionesDelContacto.forEach(r -> {
@@ -153,8 +158,8 @@ public class LogicCreacion {
             }
 
             DirTelTerEntity relacion = dirTelTerRepository
-                    .findByTerceroAndTelefonoAndDireccionAndUsadaEnContacto(
-                            terceroEntity, telefonoNuevo.getTelefono(), null, true);
+                    .findByTerceroAndTelefonoAndDireccionAndUsadaEnContactoAndExtension(
+                            terceroEntity, telefonoNuevo.getTelefono(), null, true,data.getExtension());
 
             asociarDatosConContacto(Objects.requireNonNullElseGet(relacion, () -> dirTelTerRepository.save(
                     DirTelTerEntity.builder()
@@ -166,8 +171,8 @@ public class LogicCreacion {
 
         } else {
             DirTelTerEntity relacion = dirTelTerRepository
-                    .findByTerceroAndTelefonoAndUsadaEnContacto(terceroEntity,
-                            telefonoNuevo.getTelefono(), false);
+                    .findByTerceroAndTelefonoAndUsadaEnContactoAndExtension(terceroEntity,
+                            telefonoNuevo.getTelefono(), false, data.getExtension());
 
             if (relacion != null) {
                 throw new BadRequestCustom("La relacion entre el telefono y el tercero ya existe");
@@ -242,18 +247,18 @@ public class LogicCreacion {
         List<DirTelTerEntity> relaciones = data.getTelefonos().stream()
                 .map(t -> {
                     DirTelTerEntity relacionPreviaDireccion = dirTelTerRepository
-                            .findByTerceroAndTelefonoAndDireccionAndUsadaEnContacto(
-                                    data.getTercero(), t.getTelefono(), data.getDireccion(), isContacto
+                            .findByTerceroAndTelefonoAndDireccionAndUsadaEnContactoAndExtension(
+                                    data.getTercero(), t.getTelefono(), data.getDireccion(), isContacto,t.getExtension()
                             );
 
                     if (relacionPreviaDireccion != null) {
                         return relacionPreviaDireccion;
                     }
 
-
+                    //validar la relacion previa
                     DirTelTerEntity relacionPreviaTercero = dirTelTerRepository
-                            .findByTerceroAndTelefonoAndDireccionAndUsadaEnContacto(
-                                    data.getTercero(), t.getTelefono(), null, isContacto
+                            .findByTerceroAndTelefonoAndDireccionAndUsadaEnContactoAndExtension(
+                                    data.getTercero(), t.getTelefono(), null, isContacto,t.getExtension()
                             );
 
                     if (relacionPreviaTercero != null && !isContacto) {
@@ -282,11 +287,12 @@ public class LogicCreacion {
 
             relaciones.forEach(r -> {
                 DirTelTerEntity relPrevTelefonoTer = dirTelTerRepository
-                        .findByTerceroAndTelefonoAndDireccionAndUsadaEnContacto(
+                        .findByTerceroAndTelefonoAndDireccionAndUsadaEnContactoAndExtension(
                         data.getTercero(),
                         r.getTelefono(),
                         null,
-                        true
+                        true,
+                                r.getExtension()
                 );
 
                 if (relPrevTelefonoTer != null) {
@@ -309,9 +315,9 @@ public class LogicCreacion {
         }
 
         DirTelTerEntity relacionDireccionTer = dirTelTerRepository
-                .findByTerceroAndTelefonoAndDireccionAndUsadaEnContacto
-                        (data.getTercero(), null, data.getDireccion()
-                                , isContacto);
+                .findByTerceroAndTelefonoAndDireccionAndUsadaEnContactoAndExtension(
+                        data.getTercero(), null, data.getDireccion()
+                                , isContacto,null);
 
 
         if (relacionDireccionTer != null) {

@@ -15,8 +15,9 @@ import java.util.Optional;
 @Repository
 public interface DirTelTerRepository extends JpaRepository<DirTelTerEntity,Long> {
 
-    DirTelTerEntity findByTerceroAndDireccionAndUsadaEnContacto(
+    List<DirTelTerEntity> findByTerceroAndDireccionAndUsadaEnContacto(
             TerceroEntity tercero, DireccionEntity direccion, Boolean usadaEnContacto);
+
 
 
     @Query(value = "SELECT dt FROM DirTelTerEntity dt WHERE dt.tercero = :tercero AND dt.direccion = :direccion AND dt.usadaEnContacto = true")
@@ -24,15 +25,19 @@ public interface DirTelTerRepository extends JpaRepository<DirTelTerEntity,Long>
             @Param("tercero") TerceroEntity tercero,
             @Param("direccion") DireccionEntity direccion);
 
-    @Query(value = "SELECT dt FROM DirTelTerEntity dt WHERE dt.tercero = :tercero AND dt.telefono = :telefono AND dt.usadaEnContacto = true")
-    List<DirTelTerEntity> relacionesTelTerComoContacto(
+    @Query(value = "SELECT dt FROM DirTelTerEntity dt WHERE dt.tercero = :tercero AND dt.telefono = :telefono AND dt.extension= :ext AND  dt.usadaEnContacto = true")
+    List<DirTelTerEntity> relacionesTelExtTerComoContacto(
             @Param("tercero") TerceroEntity tercero,
-            @Param("telefono") TelefonoEntity telefono);
+            @Param("telefono") TelefonoEntity telefono,
+            @Param("extension") String ext
+    );
 
-    DirTelTerEntity findByTerceroAndTelefonoAndUsadaEnContacto(
-            TerceroEntity tercero, TelefonoEntity telefono, Boolean usadaEnContacto);
+    DirTelTerEntity findByTerceroAndTelefonoAndUsadaEnContactoAndExtension(
+            TerceroEntity tercero, TelefonoEntity telefono, Boolean usadaEnContacto,String extension);
 
-   DirTelTerEntity findByTerceroAndTelefonoAndDireccionAndUsadaEnContacto(
-            TerceroEntity tercero, TelefonoEntity telefono, DireccionEntity direccion, Boolean usadaEnContacto);
+   DirTelTerEntity findByTerceroAndTelefonoAndDireccionAndUsadaEnContactoAndExtension(
+            TerceroEntity tercero, TelefonoEntity telefono, DireccionEntity direccion, Boolean usadaEnContacto,String extension);
+
+
 
 }
