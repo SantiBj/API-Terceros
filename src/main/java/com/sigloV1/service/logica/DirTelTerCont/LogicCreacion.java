@@ -82,7 +82,6 @@ public class LogicCreacion {
 
 
         if (isContacto) {
-
             ContactoEntity contacto = metodosContacto
                     .obtenerContactoOException(data.getContactoId());
 

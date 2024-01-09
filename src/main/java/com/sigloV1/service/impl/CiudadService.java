@@ -66,32 +66,6 @@ public class CiudadService implements ICiudadService, CiudadAdapter {
     }
 
     @Override
-    public CiudadDTOResDir crearCiudadConDirecciones(CiudadDTOReqDir ciudad) {
-        CiudadEntity newCiudad = CiudadEntity.builder()
-                .nombre(ciudad.getNombre())
-                .indicativo(ciudad.getIndicativo())
-                .estado(estadoAdapter.obtenerEstadoOException(ciudad.getEstado()))
-                .build();
-        CiudadEntity finalNewCiudad = newCiudad;
-        newCiudad.setDirecciones(ciudad.getDirecciones().stream().map(direccionDTO -> (
-                DireccionEntity.builder()
-                        .nombre(direccionDTO.getNombre())
-                        .direccion(direccionDTO.getDireccion())
-                        .codigoPostal(direccionDTO.getCodigoPostal())
-                        .ciudad(finalNewCiudad)
-                        .build()
-        )).toList());
-        newCiudad = ciudadRepository.save(newCiudad);
-        return CiudadDTOResDir.builder()
-                .id(newCiudad.getId())
-                .nombre(newCiudad.getNombre())
-                .indicativo(newCiudad.getIndicativo())
-                .estado(newCiudad.getEstado().getId())
-                .direcciones(newCiudad.getDirecciones().stream().map(direccion->modelMapper.map(direccion, DireccionResDTO.class)).toList())
-                .build();
-    }
-
-    @Override
     public void eliminarCiudad(Long id) {
         CiudadEntity ciudad = obtenerCiudadOException(id);
         if (!ciudad.getEstado().getPais().getEstado()){

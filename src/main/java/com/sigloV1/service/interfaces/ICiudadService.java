@@ -11,8 +11,6 @@ public interface ICiudadService {
 
     CiudadDTORes crearCiudad(CiudadDTOReq ciudad);
 
-    CiudadDTOResDir crearCiudadConDirecciones(CiudadDTOReqDir ciudad);
-
     void eliminarCiudad(Long id);
 
     CiudadDTORes editarCiudad(CiudadDTOReq newCiudad, Long id);

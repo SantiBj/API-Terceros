@@ -29,5 +29,4 @@ public class TelefonoReqDTO {
 
     @Size(max = 5)
     private String extension;
-
 }

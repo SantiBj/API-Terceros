@@ -1,10 +1,4 @@
 package com.sigloV1.service.logica.DirTelTerCont;
-
-import com.sigloV1.dao.models.DirTelTerEntity;
-import com.sigloV1.dao.models.TerceroEntity;
-import com.sigloV1.web.dtos.res.dirTelTerCon.DireccionTelefonosResDTO;
-import com.sigloV1.web.dtos.res.dirTelTerCon.DireccionesAndTelefonosDTO;
-import com.sigloV1.web.dtos.res.dirTelTerCon.TelefonoResDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

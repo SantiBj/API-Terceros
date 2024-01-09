@@ -37,6 +37,7 @@ public class CiudadEntity {
     @JoinColumn(name = "id_estado",referencedColumnName = "id")
     private EstadoEntity estado;
 
-    @OneToMany(targetEntity = DireccionEntity.class,mappedBy = "ciudad",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = DireccionEntity.class,mappedBy = "ciudad",fetch = FetchType.LAZY)
+    @Column(insertable = false,updatable = false)
     private List<DireccionEntity> direcciones;
 }

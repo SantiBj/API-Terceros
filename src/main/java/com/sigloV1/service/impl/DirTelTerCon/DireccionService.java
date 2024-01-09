@@ -39,7 +39,6 @@ public class DireccionService implements IDireccionService {
         }else{
             DireccionEntity nuevaDireccion = direccionRepository.save(
                     DireccionEntity.builder()
-                            .nombre(dataDireccion.getNombre())
                             .direccion(dataDireccion.getDireccion())
                             .codigoPostal(dataDireccion.getCodigoPostal())
                             .ciudad(ciudadAdapter.obtenerCiudadOException(dataDireccion.getCiudad()))

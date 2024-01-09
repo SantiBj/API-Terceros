@@ -25,7 +25,7 @@ public interface DirTelTerRepository extends JpaRepository<DirTelTerEntity,Long>
             @Param("tercero") TerceroEntity tercero,
             @Param("direccion") DireccionEntity direccion);
 
-    @Query(value = "SELECT dt FROM DirTelTerEntity dt WHERE dt.tercero = :tercero AND dt.telefono = :telefono AND dt.extension= :ext AND  dt.usadaEnContacto = true")
+    @Query(value = "SELECT dt FROM DirTelTerEntity dt WHERE dt.tercero = :tercero AND dt.telefono = :telefono AND dt.extension= :extension AND  dt.usadaEnContacto = true")
     List<DirTelTerEntity> relacionesTelExtTerComoContacto(
             @Param("tercero") TerceroEntity tercero,
             @Param("telefono") TelefonoEntity telefono,

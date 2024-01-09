@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/direccione-telefonos")
+@RequestMapping("api/datos-contacto")
 public class DirTelTerController {
 
     @Autowired

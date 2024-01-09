@@ -30,10 +30,6 @@ public class CiudadController {
         return new ResponseEntity<>(ciudadService.crearCiudad(ciudad), HttpStatus.CREATED);
     }
 
-    @PostMapping("/direcciones")
-    public ResponseEntity<CiudadDTOResDir> crearCiudadConDirecciones(@RequestBody @Valid CiudadDTOReqDir ciudad) {
-        return new ResponseEntity<>(ciudadService.crearCiudadConDirecciones(ciudad), HttpStatus.CREATED);
-    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> eliminarCiudad(@PathVariable Long id){
