@@ -11,6 +11,4 @@ public interface ICargoService {
     List<CargoResDTO> allCargos();
 
     CargoResDTO editarCargo(CargoReqDTO dataCargo, Long cargoId);
-
-    void eliminarCargo(Long cargoId);
 }

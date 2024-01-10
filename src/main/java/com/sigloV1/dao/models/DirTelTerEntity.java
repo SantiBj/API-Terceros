@@ -42,8 +42,7 @@ public class DirTelTerEntity {
     @Column(name = "estado_direccion")
     private Boolean estadoDireccion;
 
-    @NotNull
-    @NotBlank
+
     private String nombreDireccion;
 
     @NotNull

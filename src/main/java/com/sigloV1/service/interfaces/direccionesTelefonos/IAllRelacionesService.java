@@ -3,23 +3,28 @@ package com.sigloV1.service.interfaces.direccionesTelefonos;
 import com.sigloV1.web.dtos.req.DirTelTerCon.DatosDeContactoDTO;
 import com.sigloV1.web.dtos.req.DirTelTerCon.EDato;
 import com.sigloV1.web.dtos.res.dirTelTerCon.DireccionTelefonosResDTO;
+import com.sigloV1.web.dtos.res.dirTelTerCon.DireccionesAndTelefonosDTO;
 import com.sigloV1.web.dtos.res.dirTelTerCon.TelefonoResDTO;
 
 import java.util.List;
 
 public interface IAllRelacionesService {
 
-    // solo devolver las que contacto sea false
-    // aca de volver los datos con el id de la relacion con el tercero
-    List<DireccionTelefonosResDTO> direccionesTercero(Long idTercero);
+    DireccionesAndTelefonosDTO direccionTelefonosTercero(Long terceroId);
 
-    //aca ya toca consultar la tabla dirTelTerCon para sacar estados
-    List<DireccionTelefonosResDTO> dirTelRolContacto(Long idTercero);
-
-    List<TelefonoResDTO> telefonosSinDireccionTercero(Long idTercero);
-
-    //desactivar telefono
-    void estadoDatosTercero(EDato dato,Long relacionId);
+    DireccionesAndTelefonosDTO direccionesTelefonosContacto(Long contactoId);
 
     void crearDatosDeContacto(DatosDeContactoDTO datos);
+
+    void estadoDireccionTercero(Long relacionId,Boolean estado);
+
+    void estadoDireccionContacto(Long relacionId,Boolean estado);
+
+    void estadoTelefonoTercero(Long relacionId,Boolean estado);
+
+    void estadoTelefonoContacto(Long relacionId,Boolean estado);
+
+    void eliminarRelacionTercero(Long relacionId);
+
+    void eliminarRelacionContacto(Long relacionId);
 }

@@ -54,9 +54,4 @@ public class CargoService implements ICargoService {
         cargo.setNombre(dataCargo.getNombre());
         return modelMapper.map(cargoRepository.save(cargo),CargoResDTO.class);
     }
-
-    @Override
-    public void eliminarCargo(Long cargoId) {
-        //si se elimina un cargo se debe eliminar los contactos y las relaciones de estos en las tablas de email y direccion
-    }
 }

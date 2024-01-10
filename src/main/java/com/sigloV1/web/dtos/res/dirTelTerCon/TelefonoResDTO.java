@@ -12,6 +12,7 @@ public class TelefonoResDTO {
     private Long id;
     private Long idRelacionTer;
     private ETipoTelefono tipo;
+    private String indicativo;
     private String numero;
     private Boolean estado;
     private String extension;

@@ -75,6 +75,8 @@ public class LogicCreacion {
     }
 
     //si es de contacto el nombre va en contacto
+    //el tercero sera el contacto en si, es decir , el tercero en su rol como contacto
+    //el contacto sla relacion entre este tercero contacto y su tercero dueño
     public void crearDireccionAsociarTercero(DireccionReqDTO data) {
         boolean isContacto = data.getContactoId() != null;
         ReturnCustomDireccion direccionNueva = direccionService.crearDireccion(data);
@@ -132,6 +134,8 @@ public class LogicCreacion {
     }
 
     public void crearTelefonoAsociarTercero(TelefonoReqDTO data) {
+        if(data.getTipoTelefono() == ETipoTelefono.FIJO) throw new BadRequestCustom("Los telefonos fijos deben estar asociados a una direccion");
+
         boolean isContacto = data.getContactoId() != null;
         ReturnCustomTelefono telefonoNuevo = telefonoService.crearTelefono(data);
         TerceroEntity terceroEntity = terceroAdapter.obtenerTerceroOException(data.getTerceroId());
@@ -254,10 +258,11 @@ public class LogicCreacion {
                         return relacionPreviaDireccion;
                     }
 
-                    DirTelTerEntity relacionPreviaTercero = dirTelTerRepository
+
+                    DirTelTerEntity relacionPreviaTercero = t.getTelefono().getTipoTelefono() == ETipoTelefono.MOVIL ? dirTelTerRepository
                             .findByTerceroAndTelefonoAndDireccionAndUsadaEnContactoAndExtension(
                                     data.getTercero(), t.getTelefono(), null, isContacto,t.getExtension()
-                            );
+                            ) : null;
 
                     if (relacionPreviaTercero != null && !isContacto) {
                         relacionPreviaTercero.setDireccion(data.getDireccion());
@@ -281,18 +286,17 @@ public class LogicCreacion {
                 }).toList();
 
         if (isContacto) {
-            ContactoEntity contacto = contactoRepository.findById(data.getUsadaComoContacto()).orElseThrow(
-                    () -> new BadRequestCustom("El contacto no existe"));
+            ContactoEntity contacto = metodosContacto.obtenerContactoOException(data.getUsadaComoContacto());
 
             relaciones.forEach(r -> {
-                DirTelTerEntity relPrevTelefonoTer = dirTelTerRepository
+                DirTelTerEntity relPrevTelefonoTer = r.getTelefono().getTipoTelefono() == ETipoTelefono.MOVIL ? dirTelTerRepository
                         .findByTerceroAndTelefonoAndDireccionAndUsadaEnContactoAndExtension(
                         data.getTercero(),
                         r.getTelefono(),
                         null,
                         true,
                                 r.getExtension()
-                );
+                ):null;
 
                 if (relPrevTelefonoTer != null) {
                     Optional<DirTelTerContEntity> relacionTelConThisCont = relacionesContactoRep
@@ -321,8 +325,7 @@ public class LogicCreacion {
 
         if (relacionDireccionTer != null) {
             if (isContacto) {
-                ContactoEntity contacto = contactoRepository.findById(data.getUsadaComoContacto()).orElseThrow(
-                        () -> new BadRequestCustom("El contacto no existe"));
+                ContactoEntity contacto = metodosContacto.obtenerContactoOException(data.getUsadaComoContacto());
 
                 Optional<DirTelTerContEntity> relacionDirConThisCont = relacionesContactoRep
                         .findByDireccionTelefonoAndContacto(relacionDireccionTer, contacto);
@@ -330,7 +333,6 @@ public class LogicCreacion {
                 if (relacionDirConThisCont.isPresent()) {
                     List<DirTelTerContEntity> contUsandoRelacion = relacionesContactoRep
                             .findByDireccionTelefono(relacionDireccionTer);
-
                     relacionesContactoRep.delete(relacionDirConThisCont.get());
                     if (contUsandoRelacion.size() == 1) {
                         dirTelTerRepository.delete(relacionDireccionTer);
