@@ -4,6 +4,7 @@ import com.sigloV1.dao.models.*;
 import com.sigloV1.dao.repositories.DirTelTerCon.DirTelTerConRepository;
 import com.sigloV1.dao.repositories.DirTelTerCon.DirTelTerRepository;
 import com.sigloV1.dao.repositories.contacto.ContactoRepository;
+import com.sigloV1.service.adapters.DatosContactoAdapter;
 import com.sigloV1.service.adapters.TerceroAdapter;
 import com.sigloV1.service.impl.DirTelTerCon.returnMethods.ReturnCustomDireccion;
 import com.sigloV1.service.impl.DirTelTerCon.returnMethods.ReturnCustomTelefono;
@@ -30,7 +31,7 @@ import java.util.Optional;
 
 //TODO ----> las direcciones y telefonos usados en el rol contacto solo se usaran hay
 @Component
-public class LogicCreacion {
+public class LogicCreacion implements DatosContactoAdapter {
 
     @Autowired
     private DirTelTerRepository dirTelTerRepository;
@@ -77,10 +78,11 @@ public class LogicCreacion {
     //si es de contacto el nombre va en contacto
     //el tercero sera el contacto en si, es decir , el tercero en su rol como contacto
     //el contacto sla relacion entre este tercero contacto y su tercero dueño
-    public void crearDireccionAsociarTercero(DireccionReqDTO data) {
+    public void crearDireccionAsociarTercero(DireccionReqDTO data,TerceroEntity terceroInstance) {
         boolean isContacto = data.getContactoId() != null;
         ReturnCustomDireccion direccionNueva = direccionService.crearDireccion(data);
-        TerceroEntity terceroEntity = terceroAdapter.obtenerTerceroOException(data.getTerceroId());
+        TerceroEntity terceroEntity = terceroInstance == null ? terceroAdapter.obtenerTerceroOException(data.getTerceroId())
+                : terceroInstance;
 
 
         if (isContacto) {
@@ -133,12 +135,13 @@ public class LogicCreacion {
         }
     }
 
-    public void crearTelefonoAsociarTercero(TelefonoReqDTO data) {
+    public void crearTelefonoAsociarTercero(TelefonoReqDTO data, TerceroEntity terceroInstance) {
         if(data.getTipoTelefono() == ETipoTelefono.FIJO) throw new BadRequestCustom("Los telefonos fijos deben estar asociados a una direccion");
 
         boolean isContacto = data.getContactoId() != null;
         ReturnCustomTelefono telefonoNuevo = telefonoService.crearTelefono(data);
-        TerceroEntity terceroEntity = terceroAdapter.obtenerTerceroOException(data.getTerceroId());
+        TerceroEntity terceroEntity = terceroInstance == null ? terceroAdapter.obtenerTerceroOException(data.getTerceroId())
+                : terceroInstance;
 
         if (isContacto) {
             ContactoEntity contacto = metodosContacto
@@ -191,9 +194,10 @@ public class LogicCreacion {
         }
     }
 
-    public void crearTelefonosAsociarNuevaDireccion(DireccionTelefonosReqDTO dataDireccion) {
+    public void crearTelefonosAsociarNuevaDireccion(DireccionTelefonosReqDTO dataDireccion,TerceroEntity terceroInstance) {
 
-        TerceroEntity tercero = terceroAdapter.obtenerTerceroOException(dataDireccion.getTerceroId());
+        TerceroEntity tercero = terceroInstance == null ? terceroAdapter.obtenerTerceroOException(dataDireccion.getTerceroId())
+                :terceroInstance;
 
         ReturnCustomDireccion direccion = direccionService.crearDireccion(DireccionReqDTO
                 .builder()
@@ -218,9 +222,10 @@ public class LogicCreacion {
                 .build());
     }
 
-    public void crearTelefonosAsociarDireccionExistente(DireccionIdTelefonosReqDTO data) {
-        TerceroEntity tercero = terceroAdapter
-                .obtenerTerceroOException(data.getIdTercero());
+    public void crearTelefonosAsociarDireccionExistente(DireccionIdTelefonosReqDTO data,TerceroEntity terceroInstance) {
+        TerceroEntity tercero = terceroInstance == null ? terceroAdapter
+                .obtenerTerceroOException(data.getIdTercero())
+                :terceroInstance;
 
         DireccionEntity direccion = direccionService
                 .obtenerDireccionOException(data.getDireccionId());

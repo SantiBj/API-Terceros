@@ -6,9 +6,11 @@ import com.sigloV1.dao.models.TerceroEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface ContactoRepository extends JpaRepository<ContactoEntity,Long> {
     Optional<ContactoEntity> findByContactoAndTerceroAndCargo(TerceroEntity contacto, TerceroEntity tercero, CargoEntity cargo);
+    List<ContactoEntity> findByTercero(TerceroEntity tercero);
 }

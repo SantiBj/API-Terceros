@@ -15,10 +15,6 @@ public interface IRolesService {
     //creacion y asociacion de un rol(asociarlo con un tipo de rol) a un tipo de tercero ya existente
     void guardarRolAsociado(RolAsociacionesReqDTO rolData);
 
-    void eliminarRolAsociaciones(Long rolId);
-
-    void eliminarAsociacionTipoTercero(Long asociacionId);
-
     RolResDTO editarRol(RolReqDTO rolData);
 
     void addTipoTercero(Long tipoTerceroId,Long rolId);

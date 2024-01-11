@@ -14,5 +14,5 @@ public interface IContactoService {
 
     void eliminarContacto(Long relacionId);
 
-    void estadoContacto(Long relacionId);
+    void estadoContacto(Long relacionId,Boolean estado);
 }

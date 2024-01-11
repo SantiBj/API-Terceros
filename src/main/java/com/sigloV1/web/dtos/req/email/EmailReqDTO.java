@@ -1,5 +1,6 @@
 package com.sigloV1.web.dtos.req.email;
 
+import com.sigloV1.dao.models.ETipoCorreo;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -17,4 +18,7 @@ public class EmailReqDTO {
     @Email
     @Size(min = 6,max = 255)
     private String email;
+
+    @NotNull
+    private ETipoCorreo tipoCorreo;
 }

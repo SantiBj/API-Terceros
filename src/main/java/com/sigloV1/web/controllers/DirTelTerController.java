@@ -32,7 +32,7 @@ public class DirTelTerController {
 
     @GetMapping("/contacto/{contactoId}")
     public ResponseEntity<DireccionesAndTelefonosDTO> obtenerDatosContacto(@PathVariable Long contactoId){
-        return new ResponseEntity<>(allRelacionesService.direccionTelefonosTercero(contactoId),HttpStatus.OK);
+        return new ResponseEntity<>(allRelacionesService.direccionesTelefonosContacto(contactoId),HttpStatus.OK);
     }
 
     @PatchMapping("/estado-direccion/{relacionId}/{estado}")

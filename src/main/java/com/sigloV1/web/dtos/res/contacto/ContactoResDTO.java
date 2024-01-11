@@ -22,4 +22,6 @@ public class ContactoResDTO {
     private String identificacion;
 
     private String nombre;
+
+    private Boolean estado;
 }

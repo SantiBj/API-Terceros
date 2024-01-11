@@ -121,14 +121,14 @@ public class EmailService implements IEmailService {
     public void estadoEmailTercero(Long idRelacion,Boolean estado){
         TerceroRolEmailContEntity relacion = relacionesEmailRepository
                 .findById(idRelacion).orElseThrow(
-                        ()->new BadRequestCustom("La relacion entre el tercero y su rol con el correo no existe."));
+                        ()->new BadRequestCustom("La relacion con el correo no existe."));
         relacion.setEstado(estado);
         relacionesEmailRepository.save(relacion);
     }
 
     public void eliminarRelacionEmail(Long idRelacion){
         TerceroRolEmailContEntity relacion = relacionesEmailRepository.findById(idRelacion)
-                .orElseThrow(()->new BadRequestCustom("La relacion entre el tercero y su rol con el correo no existe."));
+                .orElseThrow(()->new BadRequestCustom("La relacion con el correo no existe."));
         relacionesEmailRepository.delete(relacion);
     }
 

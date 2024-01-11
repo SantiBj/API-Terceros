@@ -11,8 +11,5 @@ public class RolRelacionResDTO {
     private Long idRol;
     private String nombre;
     private Long tipoRol;
-
-    private Long relacionTipoTercero;
-
-    private Long tipoTerceroRelacionado;
+    private Long idRelacionTipoTercero;
 }

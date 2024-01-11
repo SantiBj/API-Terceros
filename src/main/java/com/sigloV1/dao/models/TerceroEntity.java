@@ -60,8 +60,8 @@ public class TerceroEntity {
 
     @NotBlank
     @NotNull
-    @Column(name = "fecha_nacimiento")
-    private Date fechaNacimento;
+    @Column(name = "fecha_expedicion")
+    private Date fechaExpedicion;
 
     @OneToMany(mappedBy = "terceroPadre",cascade = {},fetch = FetchType.LAZY)
     @Column(insertable = false,updatable = false)

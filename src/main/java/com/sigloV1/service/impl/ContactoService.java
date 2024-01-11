@@ -7,6 +7,7 @@ import com.sigloV1.dao.repositories.contacto.CargoRepository;
 import com.sigloV1.dao.repositories.contacto.ContactoRepository;
 import com.sigloV1.service.adapters.TerceroAdapter;
 import com.sigloV1.service.interfaces.contacto.IContactoService;
+import com.sigloV1.service.logica.contacto.MetodosContacto;
 import com.sigloV1.web.dtos.req.contacto.ContactoReqDTO;
 import com.sigloV1.web.dtos.res.contacto.ContactoResDTO;
 import com.sigloV1.web.exceptions.TypesExceptions.BadRequestCustom;
@@ -26,6 +27,10 @@ public class ContactoService implements IContactoService {
 
     @Autowired
     private CargoRepository cargoRepository;
+
+    @Autowired
+    private MetodosContacto metodosContacto;
+
 
     @Override
     public ContactoResDTO crearContacto(ContactoReqDTO dataContacto) {
@@ -55,17 +60,31 @@ public class ContactoService implements IContactoService {
     }
 
     @Override
-    public List<ContactoResDTO> contactosTercero(Long idTercero) {
-        return null;
+    public List<ContactoResDTO> contactosTercero(Long terceroId) {
+        List<ContactoEntity> contactos = contactoRepository.findByTercero(terceroAdapter
+                .obtenerTerceroOException(terceroId));
+        return contactos.stream().map(c->{
+            return ContactoResDTO
+                    .builder()
+                    .idContactoTer(c.getContacto().getId())
+                    .contactoRelacionId(c.getId())
+                    .identificacion(c.getContacto().getIdentificacion())
+                    .nombre(c.getContacto().getNombre())
+                    .estado(c.getEstado())
+                    .build();
+        }).toList();
     }
 
     @Override
     public void eliminarContacto(Long relacionId) {
-
+        ContactoEntity contacto = metodosContacto.obtenerContactoOException(relacionId);
+        contactoRepository.delete(contacto);
     }
 
     @Override
-    public void estadoContacto(Long relacionId) {
-
+    public void estadoContacto(Long relacionId,Boolean estado) {
+        ContactoEntity relacion = metodosContacto.obtenerContactoOException(relacionId);
+        relacion.setEstado(estado);
+        contactoRepository.save(relacion);
     }
 }

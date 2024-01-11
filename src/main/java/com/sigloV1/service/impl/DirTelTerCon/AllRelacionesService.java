@@ -48,13 +48,13 @@ public class AllRelacionesService implements IAllRelacionesService {
 
     public void crearDatosDeContacto(DatosDeContactoDTO datos) {
         if (datos.getDireccion() != null) {
-            logicCreacion.crearDireccionAsociarTercero(datos.getDireccion());
+            logicCreacion.crearDireccionAsociarTercero(datos.getDireccion(),null);
         } else if (datos.getTelefono() != null) {
-            logicCreacion.crearTelefonoAsociarTercero(datos.getTelefono());
+            logicCreacion.crearTelefonoAsociarTercero(datos.getTelefono(),null);
         } else if (datos.getDireccionTelefonos() != null) {
-            logicCreacion.crearTelefonosAsociarNuevaDireccion(datos.getDireccionTelefonos());
+            logicCreacion.crearTelefonosAsociarNuevaDireccion(datos.getDireccionTelefonos(),null);
         } else if (datos.getDireccionIdTelefonos() != null) {
-            logicCreacion.crearTelefonosAsociarDireccionExistente(datos.getDireccionIdTelefonos());
+            logicCreacion.crearTelefonosAsociarDireccionExistente(datos.getDireccionIdTelefonos(),null);
         }
     }
 

@@ -1,32 +1,28 @@
-package com.sigloV1.dao.models;
+package com.sigloV1.web.dtos.req.tercero;
 
-import jakarta.persistence.*;
+import com.sigloV1.dao.models.ETipoCorreo;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-
-import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity
-@Table(name = "email")
-public class EmailEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class EmailTerDTO {
 
     @NotNull
     @NotBlank
+    @Email
     @Size(min = 6,max = 255)
-    @Column(unique = true)
     private String email;
 
     @NotNull
     private ETipoCorreo tipoCorreo;
+
+    @NotNull
+    private Long rol;
 }

@@ -11,6 +11,4 @@ public interface ITipoRolService {
     void guardarTipoRol(TipoRolReqDTO tipoRolData);
 
     TipoRolResDTO editarNombreTipoRol(TipoRolReqDTO tipoRolNuevo, Long tipoRolId);
-
-    void eliminarTipoRol(Long tipoRolId);
 }

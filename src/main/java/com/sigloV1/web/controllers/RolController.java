@@ -32,18 +32,6 @@ public class RolController {
         rolesService.guardarRolAsociado(rolData);
     }
 
-    @DeleteMapping("/{rolId}")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void eliminarRolAsociaciones(@PathVariable Long rolId){
-        rolesService.eliminarRolAsociaciones(rolId);
-    }
-
-    @DeleteMapping("/asociaciones/{asociacionId}")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    //cambiarla y pedir el tipo_tercero y el rol
-    public void elimnarAsociaciones(@PathVariable Long asociacionId){
-        rolesService.eliminarAsociacionTipoTercero(asociacionId);
-    }
 
     @PatchMapping
     public ResponseEntity<RolResDTO> editarRol(@RequestBody @Valid RolReqDTO rolData){

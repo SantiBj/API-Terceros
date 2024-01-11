@@ -1,6 +1,8 @@
 package com.sigloV1.web.dtos.req.tercero;
 
 import com.sigloV1.web.dtos.req.DirTelTerCon.DireccionTelefonosReqDTO;
+import com.sigloV1.web.dtos.req.DirTelTerCon.TelefonoReqDTO;
+import com.sigloV1.web.dtos.req.email.EmailReqDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -45,9 +47,13 @@ public class TerceroReqDTO {
 
     @NotBlank
     @NotNull
-    private Date fechaNacimento;
+    private Date fechaExpedicion;
 
-    private List<DireccionTelefonosReqDTO> direcciones;
+    private List<Long> roles;
 
-    private List<TerceroReqDTO> telefonos;
+    private List<DireccionTerDTO> direcciones;
+
+    private List<TelefonoTerDTO> telefonos;
+
+    private List<EmailTerDTO> emails;
 }
