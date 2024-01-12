@@ -27,7 +27,6 @@ public class TerceroEntity {
     @Size(min=4,max=12)
     private String identificacion;
 
-    @NotBlank
     @Size(min = 5, max = 255)
     private String nombre;
 
@@ -58,7 +57,6 @@ public class TerceroEntity {
     @JoinColumn(name = "id_tipo_tercero",referencedColumnName = "id")
     private TipoTerceroEntity tipoTercero;
 
-    @NotBlank
     @NotNull
     @Column(name = "fecha_expedicion")
     private Date fechaExpedicion;
@@ -67,7 +65,5 @@ public class TerceroEntity {
     @Column(insertable = false,updatable = false)
     private List<TerceroEntity> terceroHijos;
 
-    @OneToMany(targetEntity = TerceroRolTipoTerEntity.class,mappedBy = "tercero",cascade = {},fetch = FetchType.EAGER)
-    @Column(insertable = false,updatable = false)
-    private List<TerceroRolTipoTerEntity> roles;
+
 }

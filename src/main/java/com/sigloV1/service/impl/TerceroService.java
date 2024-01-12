@@ -9,6 +9,7 @@ import com.sigloV1.service.logica.Tercero;
 import com.sigloV1.web.dtos.req.DirTelTerCon.DireccionReqDTO;
 import com.sigloV1.web.dtos.req.DirTelTerCon.DireccionTelefonosReqDTO;
 import com.sigloV1.web.dtos.req.DirTelTerCon.TelefonoReqDTO;
+import com.sigloV1.web.dtos.req.email.EmailReqDTO;
 import com.sigloV1.web.dtos.req.tercero.TerceroReqDTO;
 import com.sigloV1.web.exceptions.TypesExceptions.BadRequestCustom;
 import org.modelmapper.ModelMapper;
@@ -33,6 +34,9 @@ public class TerceroService{
 
     @Autowired
     private DatosContactoAdapter datosContactoAdapter;
+
+    @Autowired
+    private EmailCreacionAdapter emailCreacionAdapter;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -67,7 +71,7 @@ public class TerceroService{
         //id -> rol_tipo_tercero
         data.getEmails().forEach(e->{
             RolTipoTerceroEntity rol = rolAdapter.obtenerRolTipoTerceroOException(e.getRol());
-            //busco el Tercero_rol de este rol
+            //busco el tercero con el rol indicado
             TerceroRolTipoTerEntity terceroRol = terceroRoles.stream()
                     .filter(tr->(tr.getRol().getId().equals(rol.getId())))
                     .findFirst()
@@ -76,14 +80,17 @@ public class TerceroService{
             if (terceroRol == null) throw new BadRequestCustom("El rol no esta relacionado con el tercero");
 
             //crea el correo y lo une al tercero_rol_email
-            
-
+            emailCreacionAdapter.crearEmailTercero(EmailReqDTO
+                    .builder()
+                            .email(e.getEmail())
+                            .tipoCorreo(e.getTipoCorreo())
+                            .build()
+                    , terceroRol);
         });
-
+        return newTercero.getId();
     }
 
     public Long crearContacto(){
-
+        return 7L;
     }
-
 }

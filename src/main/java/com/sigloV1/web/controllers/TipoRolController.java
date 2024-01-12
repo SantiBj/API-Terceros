@@ -35,10 +35,4 @@ public class TipoRolController {
     ){
         return new ResponseEntity<>(tipoRolService.editarNombreTipoRol(tipoRolNuevo,tipoRolId),HttpStatus.OK);
     }
-
-    @DeleteMapping("/{tipoRolId}")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void eliminarTipoRol(@PathVariable Long tipoRolId){
-        tipoRolService.eliminarTipoRol(tipoRolId);
-    }
 }

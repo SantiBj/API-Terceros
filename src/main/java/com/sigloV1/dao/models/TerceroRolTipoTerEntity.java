@@ -30,10 +30,9 @@ public class TerceroRolTipoTerEntity {
     private RolTipoTerceroEntity rol;
 
     @NotNull
-    @NotBlank
     private Boolean estado;
 
-    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinTable(
             name = "tercero_contrato",
             joinColumns= @JoinColumn(name = "id_tercero_rol",referencedColumnName = "id"),

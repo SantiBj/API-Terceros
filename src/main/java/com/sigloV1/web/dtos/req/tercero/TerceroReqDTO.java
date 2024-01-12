@@ -23,7 +23,6 @@ public class TerceroReqDTO {
     @Size(min=4,max=12)
     private String identificacion;
 
-    @NotBlank
     @Size(min = 5, max = 255)
     private String nombre;
 
@@ -39,13 +38,11 @@ public class TerceroReqDTO {
     @NotNull
     private Long docDetalles;
 
-    @NotNull
     private Long terceroPadre;
 
     @NotNull
     private Long tipoTercero;
 
-    @NotBlank
     @NotNull
     private Date fechaExpedicion;
 

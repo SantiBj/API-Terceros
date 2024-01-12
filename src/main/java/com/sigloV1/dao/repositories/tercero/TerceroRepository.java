@@ -11,11 +11,10 @@ import java.util.Optional;
 
 @Repository
 public interface TerceroRepository extends JpaRepository<TerceroEntity,Long> {
-
-    @Query(value = "SELECT * FROM TerceroEntity t WHERE t.identificacion= :identificacion AND t.docDetalles= :docDetalles AND t.nombreComercial= :nombreComercial AND t.razonSocial= :razonSocial")
+    @Query(value = "SELECT t FROM TerceroEntity t WHERE t.identificacion= :identificacion AND t.docDetalles.id= :docDetallesId AND t.nombreComercial= :nombreComercial AND t.razonSocial= :razonSocial")
     Optional<TerceroEntity> terceroExistente (
             @Param("identificacion") String identificacion,
-            @Param("docDetalles") DocDetallesEntity docDetalles,
+            @Param("docDetallesId") Long docDetallesId,
             @Param("nombreComercial") String nombreComercial,
             @Param("razonSocial") String razonSocial
             );

@@ -6,6 +6,7 @@ import com.sigloV1.dao.models.TerceroRolEmailContEntity;
 import com.sigloV1.dao.models.TerceroRolTipoTerEntity;
 import com.sigloV1.dao.repositories.email.EmailRepository;
 import com.sigloV1.dao.repositories.email.RelacionesEmailRepository;
+import com.sigloV1.service.adapters.EmailCreacionAdapter;
 import com.sigloV1.service.interfaces.IEmailService;
 import com.sigloV1.service.adapters.TerceroAdapter;
 import com.sigloV1.service.logica.contacto.MetodosContacto;
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class EmailService implements IEmailService {
+public class EmailService implements IEmailService, EmailCreacionAdapter {
 
     @Autowired
     private TerceroAdapter terceroAdapter;
@@ -46,7 +47,7 @@ public class EmailService implements IEmailService {
         TerceroRolTipoTerEntity roleTercero = terceroRol instanceof TerceroRolTipoTerEntity ?
                 (TerceroRolTipoTerEntity) terceroRol : terceroAdapter.obtenerRolTercero((Long) terceroRol);
 
-
+        //creacion del email
         EmailEntity email = metodosEmail.emailARelacionar(datos);
 
         TerceroRolEmailContEntity relacion = relacionesEmailRepository.findByTerceroAndEmail(roleTercero, email).orElseGet(() ->

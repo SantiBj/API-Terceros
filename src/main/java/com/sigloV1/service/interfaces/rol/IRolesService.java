@@ -1,5 +1,6 @@
 package com.sigloV1.service.interfaces.rol;
 
+import com.sigloV1.dao.models.RolEntity;
 import com.sigloV1.web.dtos.req.rol.RolAsociacionesReqDTO;
 import com.sigloV1.web.dtos.req.rol.RolReqDTO;
 import com.sigloV1.web.dtos.res.rol.RolRelacionResDTO;
@@ -13,9 +14,9 @@ public interface IRolesService {
     List<RolRelacionResDTO> rolesPorTipoTercero(Long tipoTerceroId);
 
     //creacion y asociacion de un rol(asociarlo con un tipo de rol) a un tipo de tercero ya existente
-    void guardarRolAsociado(RolAsociacionesReqDTO rolData);
+    void crearRolAsociado(RolAsociacionesReqDTO rolData);
 
-    RolResDTO editarRol(RolReqDTO rolData);
+    RolEntity editarRol(RolReqDTO rolData);
 
     void addTipoTercero(Long tipoTerceroId,Long rolId);
 }

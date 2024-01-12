@@ -3,6 +3,7 @@ package com.sigloV1.web.exceptions;
 import com.sigloV1.web.exceptions.TypesExceptions.BadRequestCustom;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -57,5 +58,18 @@ public class ControllerExceptionsCustom {
         );
     }
 
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public final ResponseEntity<ResponseExceptionCustom> handlerViolationRestriction(
+            DataIntegrityViolationException e,WebRequest w
+    ){
+        return new ResponseEntity<>(
+                ResponseExceptionCustom.builder()
+                        .message(e.getMessage())
+                        .description(w.getDescription(true))
+                        .codeState(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                        .timeStamp(new Date())
+                        .build(),
+                HttpStatus.BAD_REQUEST);
+    }
 
 }

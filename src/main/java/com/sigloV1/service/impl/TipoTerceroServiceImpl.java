@@ -5,15 +5,12 @@ import com.sigloV1.dao.models.TipoTerceroEntity;
 import com.sigloV1.dao.repositories.tercero.TipoTeceroRepository;
 import com.sigloV1.service.adapters.TipoTerceroAdapter;
 import com.sigloV1.service.interfaces.ITipoTerceroService;
-import com.sigloV1.service.logica.TipoTerceroUtil;
 import com.sigloV1.web.dtos.req.TipoTerceroDTORq;
-import com.sigloV1.web.dtos.res.TipoTerceroDTORs;
 import com.sigloV1.web.exceptions.TypesExceptions.BadRequestCustom;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,14 +22,6 @@ public class TipoTerceroServiceImpl implements ITipoTerceroService, TipoTerceroA
     @Autowired
     private TipoTeceroRepository tipoTeceroRepository;
 
-    private TipoTerceroUtil obtenerTipoTercero(String nombre) {
-        TipoTerceroEntity tercero = tipoTeceroRepository.findByNombreIgnoreCase(nombre).orElse(new TipoTerceroEntity());
-
-        return TipoTerceroUtil.builder()
-                .tercero(tercero)
-                .existe(tercero.getNombre() != null)
-                .build();
-    }
 
     public TipoTerceroEntity obtenerTerceroOException(Long id) {
         return tipoTeceroRepository.findById(id)
@@ -40,63 +29,37 @@ public class TipoTerceroServiceImpl implements ITipoTerceroService, TipoTerceroA
     }
 
     @Override
-    public List<TipoTerceroDTORs> listaTipoTerceros() {
-        List<TipoTerceroEntity> tipos = tipoTeceroRepository.findAll();
-        if (!tipos.isEmpty()) {
-            return tipos.stream()
-                    .filter(tipo -> tipo.getEstado())
-                    .map(tipo -> modelMapper.map(tipo, TipoTerceroDTORs.class))
-                    .toList();
-        } else {
-            return new ArrayList<TipoTerceroDTORs>();
-        }
+    public List<TipoTerceroEntity> listaTipoTerceros() {
+        return tipoTeceroRepository.findAll();
     }
 
-
-    public TipoTerceroEntity cambiarEstadoTipoTercero(TipoTerceroEntity tipoTercero) {
-        tipoTercero.setEstado(true);
-        return tipoTeceroRepository.save(tipoTercero);
-    }
-
-    public TipoTerceroDTORs activarTipoTercero(Long id) {
-        TipoTerceroEntity tipo = obtenerTerceroOException(id);
-        return modelMapper.map(cambiarEstadoTipoTercero(tipo), TipoTerceroDTORs.class);
-    }
-
-    //si el tercero ya existe se envia el existente, de lo contrario se crea y envia el nuevo
-    @Override
-    public TipoTerceroDTORs crearTipoTercero(TipoTerceroDTORq tipoTercero) {
-        TipoTerceroUtil infoTercero = obtenerTipoTercero(tipoTercero.getNombre());
-        if (infoTercero.getExiste()) {
-            if (!infoTercero.getTercero().getEstado()) {
-                cambiarEstadoTipoTercero(infoTercero.getTercero());
-            }
-            return modelMapper.map(infoTercero.getTercero(), TipoTerceroDTORs.class);
-        } else {
-            TipoTerceroEntity nuevoTercero = modelMapper.map(tipoTercero, TipoTerceroEntity.class);
-            nuevoTercero.setEstado(true);
-            return modelMapper
-                    .map(tipoTeceroRepository.save(nuevoTercero), TipoTerceroDTORs.class);
-        }
+    public void estadoTipoTercero(Long tipoTerceroId,Boolean estado){
+        TipoTerceroEntity tipo = obtenerTerceroOException(tipoTerceroId);
+        tipo.setEstado(estado);
+        tipoTeceroRepository.save(tipo);
     }
 
     @Override
-    public void desactivarTipoTercero(Long id) {
-        TipoTerceroEntity tipo = obtenerTerceroOException(id);
-        if (tipo.getEstado()) {
-            tipo.setEstado(false);
-            tipoTeceroRepository.save(tipo);
+    public void crearTipoTercero(TipoTerceroDTORq tipoTercero) {
+        if(tipoTeceroRepository.findByNombreIgnoreCase(tipoTercero.getNombre()).isPresent()){
+            throw new BadRequestCustom("El tipo de tercero ya existe.");
         }
+        tipoTeceroRepository.save(
+                TipoTerceroEntity
+                        .builder()
+                        .nombre(tipoTercero.getNombre())
+                        .estado(true)
+                        .build()
+        );
     }
 
     @Override
-    public TipoTerceroDTORs editarTipoTercero(TipoTerceroDTORq tipoTercero, Long id) {
+    public TipoTerceroEntity editarTipoTercero(TipoTerceroDTORq tipoTercero, Long id) {
         TipoTerceroEntity tipo = obtenerTerceroOException(id);
-        if (tipo.getEstado()) {
-            tipo.setNombre(tipoTercero.getNombre());
-            return modelMapper.map(tipoTeceroRepository.save(tipo), TipoTerceroDTORs.class);
-        } else {
-            throw new BadRequestCustom("El tipo de tercero se encuentra desactivado activelo para poder editarlo");
+        if(tipoTeceroRepository.findByNombreIgnoreCase(tipoTercero.getNombre()).isPresent()){
+            throw new BadRequestCustom("El nombre ya esta en uso");
         }
+        tipo.setNombre(tipoTercero.getNombre());
+        return tipoTeceroRepository.save(tipo);
     }
 }

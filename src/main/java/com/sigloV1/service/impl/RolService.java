@@ -8,6 +8,7 @@ import com.sigloV1.dao.repositories.role.TipoRolRepository;
 import com.sigloV1.service.adapters.RolAdapter;
 import com.sigloV1.service.adapters.TerceroAdapter;
 import com.sigloV1.service.adapters.TipoTerceroAdapter;
+import com.sigloV1.service.interfaces.ITerceroRol;
 import com.sigloV1.service.interfaces.rol.IRolesService;
 import com.sigloV1.service.interfaces.rol.ITipoRolService;
 
@@ -28,7 +29,7 @@ import java.util.Objects;
 
 
 @Service
-public class RolService implements IRolesService, ITipoRolService, RolAdapter {
+public class RolService implements ITerceroRol,IRolesService, ITipoRolService, RolAdapter {
 
     @Autowired
     private RolRepository rolRepository;
@@ -60,6 +61,11 @@ public class RolService implements IRolesService, ITipoRolService, RolAdapter {
         TerceroEntity terceroEntity = tercero instanceof TerceroEntity ?
                 (TerceroEntity) tercero :   terceroAdapter.obtenerTerceroOException((Long)tercero);
         RolTipoTerceroEntity rol = obtenerRolTipoTerceroOException(fullRol);
+
+        if(terceroEntity.getTipoTercero().getId() != rol.getTipoTercero().getId()){
+            throw new BadRequestCustom("No es posible asignar el rol al tercero debido a que el tipo de persona" +
+                    " asignada al rol no coincide con el tipo de persona del tercero.");
+        }
 
         if(terceroRolRep.findByTerceroAndRol(terceroEntity,rol).isPresent()){
             throw new BadRequestCustom("El tercero ya cuenta con este rol.");
@@ -105,7 +111,7 @@ public class RolService implements IRolesService, ITipoRolService, RolAdapter {
 
     @Transactional
     @Override
-    public void guardarRolAsociado(RolAsociacionesReqDTO rolData) {
+    public void crearRolAsociado(RolAsociacionesReqDTO rolData) {
         List<TipoTerceroEntity> tipoTercero = rolData.getTipoTercerosId()
                 .stream().map(tipoId->
                         tipoTerceroAdapter.obtenerTerceroOException(tipoId)
@@ -136,29 +142,17 @@ public class RolService implements IRolesService, ITipoRolService, RolAdapter {
 
     //ROL
     @Override
-    public RolResDTO editarRol(RolReqDTO rolData) {
+    public RolEntity editarRol(RolReqDTO rolData) {
         RolEntity rol = logicRol.obtenerRolOException(rolData.getId());
-
-        if (!rol.getNombre().equalsIgnoreCase(rolData.getNombre())){
-            rolRepository.findByNombreIgnoreCase(rolData.getNombre()).ifPresent(
-                    value -> {
-                        throw new BadRequestCustom("El nombre que desa asignar a la rol ya esta siendo usado por otro rol");
-                    }
-            );
+        TipoRolEntity tipoRol = logicRol.obtenerTipoRolOException(rolData.getTipoRol());
+        if(rolRepository.findByNombreIgnoreCaseAndTipoRol(rolData.getNombre(),tipoRol).isPresent()){
+            throw new BadRequestCustom("Los datos que envio ya existen.");
         }
 
-        rol.setNombre(rolData.getNombre());
-        rol.setTipoRol(rolData.getTipoRol() != null ?
-                logicRol.obtenerTipoRolOException(rolData.getTipoRol()) : rol.getTipoRol()
-        );
+        rol.setNombre(rolData.getNombre() != null ? rolData.getNombre() : rol.getNombre());
+        rol.setTipoRol(rolData.getTipoRol() != null ? tipoRol : rol.getTipoRol());
 
-        RolEntity rolUpdated = rolRepository.save(rol);
-
-        return RolResDTO.builder()
-                .id(rolUpdated.getId())
-                .nombre(rolUpdated.getNombre())
-                .tipoRol(rolUpdated.getTipoRol().getId())
-                .build();
+        return rolRepository.save(rol);
     }
 
     //TIPO_ROL
@@ -172,25 +166,25 @@ public class RolService implements IRolesService, ITipoRolService, RolAdapter {
 
     @Override
     public void guardarTipoRol(TipoRolReqDTO tipoRolData) {
-        tipoRolRepository.findByNombre(tipoRolData.getNombre())
-                .orElseGet(()->{
-                    return tipoRolRepository.save(
-                            TipoRolEntity.builder()
-                                    .nombre(tipoRolData.getNombre())
-                                    .build()
-                    );
-                });
+        if(tipoRolRepository.findByNombre(tipoRolData.getNombre()).isPresent()) {
+            throw new BadRequestCustom("El tipo de rol ya existe.");
+        }
+
+        tipoRolRepository.save(
+                TipoRolEntity.builder()
+                        .nombre(tipoRolData.getNombre())
+                        .build()
+        );
     }
 
     @Override
     public TipoRolResDTO editarNombreTipoRol(TipoRolReqDTO tipoRolNuevo, Long tipoRolId) {
         TipoRolEntity tipoRol = logicRol.obtenerTipoRolOException(tipoRolId);
 
-        if(!tipoRol.getNombre().equalsIgnoreCase(tipoRolNuevo.getNombre())){
-            tipoRolRepository.findByNombre(tipoRolNuevo.getNombre()).ifPresent(value->{
-                throw new BadRequestCustom("El nombre que desea asignar al tipo de rol ya esta siendo usado.");
-            });
-        }
+        tipoRolRepository.findByNombre(tipoRolNuevo.getNombre()).ifPresent(value->{
+            throw new BadRequestCustom("El nombre que desea asignar al tipo de rol ya esta siendo usado.");
+        });
+
         tipoRol.setNombre(tipoRolNuevo.getNombre());
         return modelMapper.map(tipoRolRepository.save(tipoRol),TipoRolResDTO.class);
     }

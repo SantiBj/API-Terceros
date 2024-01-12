@@ -1,15 +1,14 @@
 package com.sigloV1.web.controllers;
 
+import com.sigloV1.dao.models.TipoTerceroEntity;
 import com.sigloV1.service.interfaces.ITipoTerceroService;
 import com.sigloV1.web.dtos.req.TipoTerceroDTORq;
-import com.sigloV1.web.dtos.res.TipoTerceroDTORs;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.HTML;
 import java.util.List;
 
 @RestController
@@ -20,31 +19,25 @@ public class TipoTerceroController {
     private ITipoTerceroService tipoTerceroService;
 
     @GetMapping
-    public ResponseEntity<List<TipoTerceroDTORs>> listaTipoTerceros() {
+    public ResponseEntity<List<TipoTerceroEntity>> listaTipoTerceros() {
         return new ResponseEntity<>(tipoTerceroService.listaTipoTerceros(), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<TipoTerceroDTORs> crearTipoTercero(@RequestBody @Valid TipoTerceroDTORq newTipoTercero) {
-        return new ResponseEntity<>(tipoTerceroService.crearTipoTercero(newTipoTercero), HttpStatus.CREATED);
+    @ResponseStatus(value=HttpStatus.CREATED)
+    public void crearTipoTercero(@RequestBody @Valid TipoTerceroDTORq newTipoTercero) {
+        tipoTerceroService.crearTipoTercero(newTipoTercero);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> desactivarTipoTercero(@PathVariable Long id) {
-        tipoTerceroService.desactivarTipoTercero(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @PatchMapping("/estado/{tipoTerceroId}/{estado}")
+    @ResponseStatus(HttpStatus.OK)
+    public void estadoTipoTercero(@PathVariable Long tipoTerceroId,@PathVariable Boolean estado){
+        tipoTerceroService.estadoTipoTercero(tipoTerceroId,estado);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TipoTerceroDTORs> editarTipoTercero(@PathVariable Long id
+    public ResponseEntity<TipoTerceroEntity> editarTipoTercero(@PathVariable Long id
             , @RequestBody @Valid TipoTerceroDTORq tipoTercero) {
         return new ResponseEntity<>(tipoTerceroService.editarTipoTercero(tipoTercero, id), HttpStatus.OK);
     }
-
-    @GetMapping("/activar/{id}")
-    public ResponseEntity<TipoTerceroDTORs> activarTipoTercero(@PathVariable Long id) {
-        return new ResponseEntity<>(tipoTerceroService.activarTipoTercero(id), HttpStatus.OK);
-    }
-
-
 }

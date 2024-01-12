@@ -1,18 +1,16 @@
 package com.sigloV1.service.interfaces;
 
+import com.sigloV1.dao.models.TipoTerceroEntity;
 import com.sigloV1.web.dtos.req.TipoTerceroDTORq;
-import com.sigloV1.web.dtos.res.TipoTerceroDTORs;
 
 import java.util.List;
 
 public interface ITipoTerceroService {
 
-    List<TipoTerceroDTORs> listaTipoTerceros();
-    TipoTerceroDTORs crearTipoTercero(TipoTerceroDTORq tipoTercero);
+    List<TipoTerceroEntity> listaTipoTerceros();
+    void crearTipoTercero(TipoTerceroDTORq tipoTercero);
 
-    void desactivarTipoTercero(Long id);
+    void estadoTipoTercero(Long tipoTerceroId,Boolean estado);
 
-    TipoTerceroDTORs activarTipoTercero(Long id);
-
-    TipoTerceroDTORs editarTipoTercero(TipoTerceroDTORq tipoTercero,Long id);
+    TipoTerceroEntity editarTipoTercero(TipoTerceroDTORq tipoTercero,Long id);
 }

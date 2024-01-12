@@ -28,16 +28,4 @@ public class TipoTerceroEntity {
     private String nombre;
 
     private Boolean estado;
-
-    @OneToMany(targetEntity = TerceroEntity.class,mappedBy = "tipoTercero",cascade = {},fetch = FetchType.LAZY)
-    @Column(nullable = false,insertable = false)
-    private List<TerceroEntity> terceros;
-
-    @OneToMany(targetEntity = DocDetallesTipoTerceroEntity.class,mappedBy = "tipoTercero",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
-    @Column(insertable = false,updatable = false)
-    private List<DocDetallesTipoTerceroEntity> docDetallesTipoTercero;
-
-    @OneToMany(targetEntity = RolTipoTerceroEntity.class,mappedBy = "tipoTercero",cascade = {},fetch = FetchType.LAZY)
-    @Column(insertable = false,updatable = false)
-    private List<RolTipoTerceroEntity> roles;
 }

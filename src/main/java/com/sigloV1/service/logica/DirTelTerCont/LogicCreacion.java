@@ -170,6 +170,7 @@ public class LogicCreacion implements DatosContactoAdapter {
                     DirTelTerEntity.builder()
                             .telefono(telefonoNuevo.getTelefono())
                             .tercero(terceroEntity)
+                            .extension(data.getExtension())
                             .usadaEnContacto(data.getContactoId() != null)
                             .build()
             )), contacto,null);
@@ -186,6 +187,7 @@ public class LogicCreacion implements DatosContactoAdapter {
                         DirTelTerEntity.builder()
                                 .telefono(telefonoNuevo.getTelefono())
                                 .tercero(terceroEntity)
+                                .extension(data.getExtension())
                                 .estadoTelefono(true)
                                 .usadaEnContacto(data.getContactoId() != null)
                                 .build()

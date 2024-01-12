@@ -50,7 +50,7 @@ public class Tercero implements TerceroAdapter {
 
         Boolean alreadyExistsTercero = terceroRepository.terceroExistente(
                 data.getIdentificacion(),
-                docDetalles,
+                docDetalles.getId(),
                 data.getNombreComercial(),
                 data.getRazonSocial()
         ).isPresent();
