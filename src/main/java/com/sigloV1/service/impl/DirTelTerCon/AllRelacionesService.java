@@ -48,13 +48,13 @@ public class AllRelacionesService implements IAllRelacionesService {
 
     public void crearDatosDeContacto(DatosDeContactoDTO datos) {
         if (datos.getDireccion() != null) {
-            logicCreacion.crearDireccionAsociarTercero(datos.getDireccion(),null);
+            logicCreacion.crearDireccionAsociarTercero(datos.getDireccion(), null, null);
         } else if (datos.getTelefono() != null) {
-            logicCreacion.crearTelefonoAsociarTercero(datos.getTelefono(),null);
+            logicCreacion.crearTelefonoAsociarTercero(datos.getTelefono(), null, null);
         } else if (datos.getDireccionTelefonos() != null) {
-            logicCreacion.crearTelefonosAsociarNuevaDireccion(datos.getDireccionTelefonos(),null);
+            logicCreacion.crearTelefonosAsociarNuevaDireccion(datos.getDireccionTelefonos(), null, null);
         } else if (datos.getDireccionIdTelefonos() != null) {
-            logicCreacion.crearTelefonosAsociarDireccionExistente(datos.getDireccionIdTelefonos(),null);
+            logicCreacion.crearTelefonosAsociarDireccionExistente(datos.getDireccionIdTelefonos(), null, null);
         }
     }
 
@@ -70,7 +70,7 @@ public class AllRelacionesService implements IAllRelacionesService {
         return logicConsulta.obtenerDatosDeContactoContacto(contacto);
     }
 
-    public void estadoDireccionTercero(Long relacionId,Boolean estado) {
+    public void estadoDireccionTercero(Long relacionId, Boolean estado) {
         //si se desactiva la direccion se desactivan todos los telefonos asociados a esta
         //si se activa la direccion se activan todos los telefonos asociados a esta
         DirTelTerEntity relacion = datosContacto.obtenerRelacionTercero(relacionId);
@@ -87,55 +87,57 @@ public class AllRelacionesService implements IAllRelacionesService {
         });
     }
 
-    public void estadoDireccionContacto(Long relacionId,Boolean estado){
+    public void estadoDireccionContacto(Long relacionId, Boolean estado) {
         DirTelTerContEntity relacion = datosContacto.obtenerRelacionContacto(relacionId);
         //todas las relaciones que tenga la misma direccion y esten asociadas a este contacto
         List<DirTelTerEntity> relacionesWithDireccion = datosContactoTercero
                 .findByTerceroAndDireccionAndUsadaEnContacto(
                         relacion.getContacto().getContacto()
-                        ,relacion.getDireccionTelefono().getDireccion()
-                        ,true);
+                        , relacion.getDireccionTelefono().getDireccion()
+                        , true);
 
         //cuales de estas relaciones del contacto se usan para esta empresa especifica
         relacionesWithDireccion
-                .forEach(rd-> {
-                   datosContactoContacto.findByDireccionTelefonoAndContacto(rd, relacion.getContacto())
-                           .ifPresent(value->{
-                               value.setEstadoDireccion(estado);
-                               value.setEstadoTelefono(estado);
-                               datosContactoContacto.save(value);
-                           });
+                .forEach(rd -> {
+                    datosContactoContacto.findByDireccionTelefonoAndContacto(rd, relacion.getContacto())
+                            .ifPresent(value -> {
+                                value.setEstadoDireccion(estado);
+                                value.setEstadoTelefono(estado);
+                                datosContactoContacto.save(value);
+                            });
                 });
     }
 
-    public void estadoTelefonoTercero(Long relacionId,Boolean estado){
+    public void estadoTelefonoTercero(Long relacionId, Boolean estado) {
         DirTelTerEntity relacion = datosContacto.obtenerRelacionTercero(relacionId);
-        if (relacion.getUsadaEnContacto()) throw new BadRequestCustom("La relacion no pertenece a un tercero, pertenece a un contacto.");
+        if (relacion.getUsadaEnContacto())
+            throw new BadRequestCustom("La relacion no pertenece a un tercero, pertenece a un contacto.");
         relacion.setEstadoTelefono(estado);
         datosContactoTercero.save(relacion);
     }
 
 
-    public void estadoTelefonoContacto(Long relacionId,Boolean estado){
+    public void estadoTelefonoContacto(Long relacionId, Boolean estado) {
         DirTelTerContEntity relacion = datosContacto.obtenerRelacionContacto(relacionId);
         relacion.setEstadoTelefono(estado);
         datosContactoContacto.save(relacion);
     }
 
-    public void eliminarRelacionTercero(Long relacionId){
+    public void eliminarRelacionTercero(Long relacionId) {
         DirTelTerEntity relacion = datosContacto.obtenerRelacionTercero(relacionId);
-        if (relacion.getUsadaEnContacto()) throw new BadRequestCustom("La relacion no pertenece a un tercero, pertenece a un contacto.");
+        if (relacion.getUsadaEnContacto())
+            throw new BadRequestCustom("La relacion no pertenece a un tercero, pertenece a un contacto.");
         datosContactoTercero.delete(relacion);
     }
 
-    public void eliminarRelacionContacto(Long relacionId){
+    public void eliminarRelacionContacto(Long relacionId) {
         DirTelTerContEntity relacion = datosContacto.obtenerRelacionContacto(relacionId);
         Integer cantidadRelacionesWithDireccion = datosContactoContacto.findByDireccionTelefono(relacion.getDireccionTelefono()).size();
 
-        if (cantidadRelacionesWithDireccion == 1){
+        if (cantidadRelacionesWithDireccion == 1) {
             datosContactoTercero.delete(relacion.getDireccionTelefono());
         }
         datosContactoContacto.delete(relacion);
     }
 
- }
+}

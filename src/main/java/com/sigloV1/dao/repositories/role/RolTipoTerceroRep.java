@@ -4,6 +4,7 @@ import com.sigloV1.dao.models.RolEntity;
 import com.sigloV1.dao.models.RolTipoTerceroEntity;
 import com.sigloV1.dao.models.TipoTerceroEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,4 +16,8 @@ public interface RolTipoTerceroRep extends JpaRepository<RolTipoTerceroEntity,Lo
     Optional<RolTipoTerceroEntity> findByTipoTerceroAndRol(TipoTerceroEntity tipoTercero, RolEntity rol);
 
     List<RolTipoTerceroEntity> findByRol(RolEntity rol);
+
+
+    @Query(value = "SELECT rtt FROM RolTipoTerceroEntity AS rtt WHERE LOWER(rtt.rol.nombre) = LOWER('CONTACTO')")
+    RolTipoTerceroEntity obtenerRolContacto();
 }

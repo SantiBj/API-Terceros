@@ -1,5 +1,6 @@
 package com.sigloV1.service.logica.DirTelTerCont.Params;
 
+import com.sigloV1.dao.models.ContactoEntity;
 import com.sigloV1.dao.models.DireccionEntity;
 import com.sigloV1.dao.models.TelefonoEntity;
 import com.sigloV1.dao.models.TerceroEntity;
@@ -17,7 +18,7 @@ public class RelacionarALL {
     private DireccionEntity direccion;
     private List<TelefonoParams> telefonos;
 
-    private Long usadaComoContacto;
+    private ContactoEntity usadaComoContacto;
 
     private String nombreDireccion;
 

@@ -5,10 +5,12 @@ import com.sigloV1.dao.models.ContactoEntity;
 import com.sigloV1.dao.models.TerceroEntity;
 import com.sigloV1.dao.repositories.contacto.CargoRepository;
 import com.sigloV1.dao.repositories.contacto.ContactoRepository;
+import com.sigloV1.service.adapters.ContactoAdapter;
 import com.sigloV1.service.adapters.TerceroAdapter;
 import com.sigloV1.service.interfaces.contacto.IContactoService;
 import com.sigloV1.service.logica.contacto.MetodosContacto;
 import com.sigloV1.web.dtos.req.contacto.ContactoReqDTO;
+import com.sigloV1.web.dtos.req.contacto.ContactoReqEntity;
 import com.sigloV1.web.dtos.res.contacto.ContactoResDTO;
 import com.sigloV1.web.exceptions.TypesExceptions.BadRequestCustom;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +19,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ContactoService implements IContactoService {
+public class ContactoService implements IContactoService, ContactoAdapter {
 
     @Autowired
     private ContactoRepository contactoRepository;
 
     @Autowired
-    private TerceroAdapter terceroAdapter;
+    private TerceroAdapter validacionExistencia;
 
     @Autowired
     private CargoRepository cargoRepository;
@@ -33,35 +35,49 @@ public class ContactoService implements IContactoService {
 
 
     @Override
-    public ContactoResDTO crearContacto(ContactoReqDTO dataContacto) {
-        if (dataContacto.getContactoId().equals(dataContacto.getTercero())) throw new BadRequestCustom("Un tercero no puede ser contacto de si mismo.");
-        TerceroEntity tercero = terceroAdapter.obtenerTerceroOException(dataContacto.getTercero());
-        TerceroEntity contacto = terceroAdapter.obtenerTerceroOException(dataContacto.getContactoId());
-        CargoEntity cargo = cargoRepository.findById(dataContacto.getCargo())
+    public <T> ContactoEntity crearContacto(T dataContacto) {
+
+        TerceroEntity terceroEntity;
+        TerceroEntity contacto;
+        Long cargoId;
+
+        if (dataContacto instanceof ContactoReqDTO){
+            ContactoReqDTO dataExterna = (ContactoReqDTO) dataContacto;
+            terceroEntity = validacionExistencia.obtenerTerceroOException(dataExterna.getTercero());
+            contacto = validacionExistencia.obtenerTerceroOException(dataExterna.getContactoId());
+            cargoId = dataExterna.getCargo();
+        }else{
+            ContactoReqEntity entidades = (ContactoReqEntity) dataContacto;
+            terceroEntity = entidades.getTercero();
+            contacto = entidades.getContacto();
+            cargoId = entidades.getCargo();
+        }
+
+        CargoEntity cargo = cargoRepository.findById(cargoId)
                 .orElseThrow(()->new BadRequestCustom("El cargo no existe."));
 
-        if (contactoRepository.findByContactoAndTerceroAndCargo(contacto,tercero,cargo).isPresent()){
+        if (terceroEntity.getId().equals(contacto.getId())){
+            throw new BadRequestCustom("Un tercero no puede ser contacto de si mismo.");
+        }
+        if (!contacto.getTipoTercero().getNombre().toUpperCase().equals("NATURAL")){
+            throw new BadRequestCustom("El contacto debe ser una persona natural.");
+        }
+        if (contactoRepository.findByContactoAndTerceroAndCargo(contacto,terceroEntity,cargo).isPresent()){
             throw new BadRequestCustom("El contacto ya existe.");
         }
 
-        ContactoEntity contactoRelacion = contactoRepository.save(ContactoEntity
+        return contactoRepository.save(ContactoEntity
                 .builder()
-                        .contacto(contacto)
-                        .tercero(tercero)
-                        .cargo(cargo)
-                        .estado(true)
+                .contacto(contacto)
+                .tercero(terceroEntity)
+                .cargo(cargo)
+                .estado(true)
                 .build());
-        return ContactoResDTO.builder()
-                .contactoRelacionId(contactoRelacion.getId())
-                .idContactoTer(contactoRelacion.getContacto().getId())
-                .identificacion(contactoRelacion.getContacto().getIdentificacion())
-                .nombre(contactoRelacion.getContacto().getNombre())
-                .build();
     }
 
     @Override
     public List<ContactoResDTO> contactosTercero(Long terceroId) {
-        List<ContactoEntity> contactos = contactoRepository.findByTercero(terceroAdapter
+        List<ContactoEntity> contactos = contactoRepository.findByTercero(validacionExistencia
                 .obtenerTerceroOException(terceroId));
         return contactos.stream().map(c->{
             return ContactoResDTO

@@ -18,8 +18,9 @@ public class ContactoController {
     private IContactoService contactoService;
 
     @PostMapping
-    public ResponseEntity<ContactoResDTO> crearContacto(@RequestBody ContactoReqDTO data){
-        return new ResponseEntity<>(contactoService.crearContacto(data), HttpStatus.CREATED);
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public void crearContacto(@RequestBody ContactoReqDTO data){
+        contactoService.crearContacto(data);
     }
 
     @GetMapping("/{terceroId}")

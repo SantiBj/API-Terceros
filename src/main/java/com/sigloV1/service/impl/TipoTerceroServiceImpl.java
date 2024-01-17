@@ -53,6 +53,7 @@ public class TipoTerceroServiceImpl implements ITipoTerceroService, TipoTerceroA
         );
     }
 
+
     @Override
     public TipoTerceroEntity editarTipoTercero(TipoTerceroDTORq tipoTercero, Long id) {
         TipoTerceroEntity tipo = obtenerTerceroOException(id);

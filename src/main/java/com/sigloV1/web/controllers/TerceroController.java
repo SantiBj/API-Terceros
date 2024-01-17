@@ -1,6 +1,8 @@
 package com.sigloV1.web.controllers;
 
-import com.sigloV1.service.impl.TerceroService;
+
+import com.sigloV1.service.interfaces.ITerceroService;
+import com.sigloV1.web.dtos.req.tercero.TerceroContactoDTO;
 import com.sigloV1.web.dtos.req.tercero.TerceroReqDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +18,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class TerceroController {
 
     @Autowired
-    private TerceroService terceroService;
+    private ITerceroService terceroService;
 
     @PostMapping
     public ResponseEntity<Long> crearTercero(@RequestBody @Valid TerceroReqDTO data){
         return new ResponseEntity<>(terceroService.crearTercero(data), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/contacto")
+    public ResponseEntity<Long> crearContacto(@RequestBody @Valid TerceroContactoDTO data){
+        return new ResponseEntity<>(terceroService.crearContacto(data),HttpStatus.CREATED);
     }
 }

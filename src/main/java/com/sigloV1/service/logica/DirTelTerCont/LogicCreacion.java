@@ -43,7 +43,7 @@ public class LogicCreacion implements DatosContactoAdapter {
     private ITelefonoService telefonoService;
 
     @Autowired
-    private TerceroAdapter terceroAdapter;
+    private TerceroAdapter validacionExistencia;
 
     @Autowired
     private ContactoRepository contactoRepository;
@@ -77,16 +77,25 @@ public class LogicCreacion implements DatosContactoAdapter {
 
     //si es de contacto el nombre va en contacto
     //el tercero sera el contacto en si, es decir , el tercero en su rol como contacto
-    //el contacto sla relacion entre este tercero contacto y su tercero dueño
-    public void crearDireccionAsociarTercero(DireccionReqDTO data,TerceroEntity terceroInstance) {
-        boolean isContacto = data.getContactoId() != null;
+    //el contacto en la relacion entre este tercero contacto y su tercero dueño
+    public void crearDireccionAsociarTercero(DireccionReqDTO data,TerceroEntity terceroInstance,ContactoEntity contactoEntity) {
+        boolean isContacto = false;
+
+        if (contactoEntity != null){
+            isContacto = true;
+        }
+        if (data.getContactoId() != null && contactoEntity == null){
+            isContacto = true;
+        }
+
+
         ReturnCustomDireccion direccionNueva = direccionService.crearDireccion(data);
-        TerceroEntity terceroEntity = terceroInstance == null ? terceroAdapter.obtenerTerceroOException(data.getTerceroId())
+        TerceroEntity terceroEntity = terceroInstance == null ? validacionExistencia.obtenerTerceroOException(data.getTerceroId())
                 : terceroInstance;
 
 
         if (isContacto) {
-            ContactoEntity contacto = metodosContacto
+            ContactoEntity contacto = contactoEntity != null ? contactoEntity: metodosContacto
                     .obtenerContactoOException(data.getContactoId());
 
             List<DirTelTerEntity> relacionesDelContacto = dirTelTerRepository
@@ -112,7 +121,7 @@ public class LogicCreacion implements DatosContactoAdapter {
                     DirTelTerEntity.builder()
                             .direccion(direccionNueva.getDireccion())
                             .tercero(terceroEntity)
-                            .usadaEnContacto(data.getContactoId() != null)
+                            .usadaEnContacto(true)
                             .build()
             )), contacto, data.getNombreDireccion());
         } else {
@@ -128,23 +137,34 @@ public class LogicCreacion implements DatosContactoAdapter {
                                 .tercero(terceroEntity)
                                 .nombreDireccion(data.getNombreDireccion())
                                 .estadoDireccion(true)
-                                .usadaEnContacto(data.getContactoId() != null)
+                                .usadaEnContacto(false)
                                 .build()
                 );
             }
         }
     }
 
-    public void crearTelefonoAsociarTercero(TelefonoReqDTO data, TerceroEntity terceroInstance) {
+    public void crearTelefonoAsociarTercero(TelefonoReqDTO data, TerceroEntity terceroInstance
+            ,ContactoEntity contactoEntity) {
         if(data.getTipoTelefono() == ETipoTelefono.FIJO) throw new BadRequestCustom("Los telefonos fijos deben estar asociados a una direccion");
 
-        boolean isContacto = data.getContactoId() != null;
+        boolean isContacto = false;
+
+        if (contactoEntity != null){
+            isContacto = true;
+        }
+        if (data.getContactoId() != null && contactoEntity == null){
+            isContacto = true;
+        }
+
         ReturnCustomTelefono telefonoNuevo = telefonoService.crearTelefono(data);
-        TerceroEntity terceroEntity = terceroInstance == null ? terceroAdapter.obtenerTerceroOException(data.getTerceroId())
+        TerceroEntity terceroEntity = terceroInstance == null ? validacionExistencia.obtenerTerceroOException(data.getTerceroId())
                 : terceroInstance;
 
         if (isContacto) {
-            ContactoEntity contacto = metodosContacto
+            System.out.println("Soy un contacto");
+
+            ContactoEntity contacto = contactoEntity != null ? contactoEntity: metodosContacto
                     .obtenerContactoOException(data.getContactoId());
 
             List<DirTelTerEntity> relacionesDelContacto = dirTelTerRepository
@@ -166,12 +186,13 @@ public class LogicCreacion implements DatosContactoAdapter {
                     .findByTerceroAndTelefonoAndDireccionAndUsadaEnContactoAndExtension(
                             terceroEntity, telefonoNuevo.getTelefono(), null, true,data.getExtension());
 
+
             asociarDatosConContacto(Objects.requireNonNullElseGet(relacion, () -> dirTelTerRepository.save(
                     DirTelTerEntity.builder()
                             .telefono(telefonoNuevo.getTelefono())
                             .tercero(terceroEntity)
                             .extension(data.getExtension())
-                            .usadaEnContacto(data.getContactoId() != null)
+                            .usadaEnContacto(true)
                             .build()
             )), contacto,null);
 
@@ -189,17 +210,28 @@ public class LogicCreacion implements DatosContactoAdapter {
                                 .tercero(terceroEntity)
                                 .extension(data.getExtension())
                                 .estadoTelefono(true)
-                                .usadaEnContacto(data.getContactoId() != null)
+                                .usadaEnContacto(false)
                                 .build()
                 );
             }
         }
     }
 
-    public void crearTelefonosAsociarNuevaDireccion(DireccionTelefonosReqDTO dataDireccion,TerceroEntity terceroInstance) {
+    public void crearTelefonosAsociarNuevaDireccion(DireccionTelefonosReqDTO dataDireccion,TerceroEntity terceroInstance
+            ,ContactoEntity contactoEntity) {
 
-        TerceroEntity tercero = terceroInstance == null ? terceroAdapter.obtenerTerceroOException(dataDireccion.getTerceroId())
+        TerceroEntity tercero = terceroInstance == null ? validacionExistencia.obtenerTerceroOException(dataDireccion.getTerceroId())
                 :terceroInstance;
+
+        ContactoEntity contacto = null;
+
+        if (contactoEntity != null){
+            contacto = contactoEntity;
+        }
+        if (contactoEntity == null && dataDireccion.getContactoId() != null ){
+            contacto = metodosContacto.obtenerContactoOException(dataDireccion.getContactoId());
+        }
+
 
         ReturnCustomDireccion direccion = direccionService.crearDireccion(DireccionReqDTO
                 .builder()
@@ -218,16 +250,27 @@ public class LogicCreacion implements DatosContactoAdapter {
         relacionarDireccionAndTelefonosAndTercero(RelacionarALL.builder()
                 .direccion(direccion.getDireccion())
                 .telefonos(telefonos)
-                .usadaComoContacto(dataDireccion.getContactoId())
+                .usadaComoContacto(contacto)
                 .tercero(tercero)
                 .nombreDireccion(dataDireccion.getNombreDireccion())
                 .build());
     }
 
-    public void crearTelefonosAsociarDireccionExistente(DireccionIdTelefonosReqDTO data,TerceroEntity terceroInstance) {
-        TerceroEntity tercero = terceroInstance == null ? terceroAdapter
+    public void crearTelefonosAsociarDireccionExistente(DireccionIdTelefonosReqDTO data,TerceroEntity terceroInstance
+            ,ContactoEntity contactoEntity) {
+        TerceroEntity tercero = terceroInstance == null ? validacionExistencia
                 .obtenerTerceroOException(data.getIdTercero())
                 :terceroInstance;
+
+        ContactoEntity contacto = null;
+
+        if (contactoEntity != null){
+            contacto = contactoEntity;
+        }
+        if (contactoEntity == null && data.getContactoId() != null ){
+            contacto = metodosContacto.obtenerContactoOException(data.getContactoId());
+        }
+
 
         DireccionEntity direccion = direccionService
                 .obtenerDireccionOException(data.getDireccionId());
@@ -242,7 +285,7 @@ public class LogicCreacion implements DatosContactoAdapter {
         relacionarDireccionAndTelefonosAndTercero(RelacionarALL.builder()
                 .direccion(direccion)
                 .telefonos(telefonos)
-                .usadaComoContacto(data.getContactoId())
+                .usadaComoContacto(contacto)
                 .nombreDireccion(data.getNombreDireccion())
                 .tercero(tercero)
                 .build());
@@ -293,7 +336,7 @@ public class LogicCreacion implements DatosContactoAdapter {
                 }).toList();
 
         if (isContacto) {
-            ContactoEntity contacto = metodosContacto.obtenerContactoOException(data.getUsadaComoContacto());
+            ContactoEntity contacto = data.getUsadaComoContacto();
 
             relaciones.forEach(r -> {
                 DirTelTerEntity relPrevTelefonoTer = r.getTelefono().getTipoTelefono() == ETipoTelefono.MOVIL ? dirTelTerRepository
@@ -332,7 +375,7 @@ public class LogicCreacion implements DatosContactoAdapter {
 
         if (relacionDireccionTer != null) {
             if (isContacto) {
-                ContactoEntity contacto = metodosContacto.obtenerContactoOException(data.getUsadaComoContacto());
+                ContactoEntity contacto = data.getUsadaComoContacto();
 
                 Optional<DirTelTerContEntity> relacionDirConThisCont = relacionesContactoRep
                         .findByDireccionTelefonoAndContacto(relacionDireccionTer, contacto);

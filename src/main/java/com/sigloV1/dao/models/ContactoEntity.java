@@ -33,7 +33,6 @@ public class ContactoEntity {
     @JoinColumn(name = "id_cargo", referencedColumnName = "id", nullable = false)
     private CargoEntity cargo;
 
-    @NotBlank
     @NotNull
     private Boolean estado;
 }

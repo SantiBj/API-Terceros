@@ -21,7 +21,7 @@ public class TelefonoTerDTO {
     @NotNull
     private ETipoTelefono tipoTelefono;
 
-    @NotNull
+
     @NotBlank
     private String extension;
 }

@@ -1,30 +1,21 @@
 package com.sigloV1.service.impl;
 
 import com.sigloV1.dao.models.*;
-import com.sigloV1.dao.repositories.DocDetallesRep;
-import com.sigloV1.dao.repositories.tercero.TerceroRepository;
-import com.sigloV1.dao.repositories.tercero.TerceroRolTipoTerRepository;
+import com.sigloV1.dao.repositories.role.RolTipoTerceroRep;
 import com.sigloV1.service.adapters.*;
-import com.sigloV1.service.logica.Tercero;
-import com.sigloV1.web.dtos.req.DirTelTerCon.DireccionReqDTO;
-import com.sigloV1.web.dtos.req.DirTelTerCon.DireccionTelefonosReqDTO;
-import com.sigloV1.web.dtos.req.DirTelTerCon.TelefonoReqDTO;
-import com.sigloV1.web.dtos.req.email.EmailReqDTO;
+import com.sigloV1.service.interfaces.ITerceroService;
+import com.sigloV1.service.logica.tercero.Tercero;
+import com.sigloV1.web.dtos.req.contacto.ContactoReqEntity;
+import com.sigloV1.web.dtos.req.tercero.TerceroContactoDTO;
 import com.sigloV1.web.dtos.req.tercero.TerceroReqDTO;
-import com.sigloV1.web.exceptions.TypesExceptions.BadRequestCustom;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
-public class TerceroService{
-
-    @Autowired
-    private TerceroRepository terceroRepository;
+public class TerceroService implements ITerceroService {
 
     @Autowired
     private Tercero terceroLogic;
@@ -33,64 +24,52 @@ public class TerceroService{
     private RolAdapter rolAdapter;
 
     @Autowired
-    private DatosContactoAdapter datosContactoAdapter;
+    private RolTipoTerceroRep rolTipoTerceroRep;
 
     @Autowired
-    private EmailCreacionAdapter emailCreacionAdapter;
+    private ContactoAdapter contactoAdapter;
 
     @Autowired
-    private ModelMapper modelMapper;
+    private TerceroAdapter validacionExistencia;
+
 
     @Transactional
     public Long crearTercero(TerceroReqDTO data){
-        TerceroEntity newTercero = terceroLogic.crearTercero(data);
+        TerceroEntity newTercero = terceroLogic.crearTercero(data,data.getDocDetalles());
 
         List<TerceroRolTipoTerEntity> terceroRoles = data.getRoles().stream().map(r->{
             return rolAdapter.relacionarTerceroRol(newTercero,r);
         }).toList();
 
-        data.getDirecciones().forEach(d->{
-            if(d.getTelefonos().size() > 0){
-                datosContactoAdapter.crearTelefonosAsociarNuevaDireccion(
-                        modelMapper.map(d,DireccionTelefonosReqDTO.class),
-                        newTercero
-                );
-            }else{
-                datosContactoAdapter.crearDireccionAsociarTercero(
-                        modelMapper.map(d, DireccionReqDTO.class)
-                        ,newTercero);
-            }
-        });
+        terceroLogic.crearDirecciones(data.getDirecciones(),newTercero,null);
+        terceroLogic.crearTelefonos(data.getTelefonos(),newTercero,null);
+        terceroLogic.crearEmails(data.getEmails(),terceroRoles,null);
 
-        data.getTelefonos().forEach(t->{
-            datosContactoAdapter.crearTelefonoAsociarTercero(
-                    modelMapper.map(t, TelefonoReqDTO.class)
-                    ,newTercero);
-        });
-
-        //id -> rol_tipo_tercero
-        data.getEmails().forEach(e->{
-            RolTipoTerceroEntity rol = rolAdapter.obtenerRolTipoTerceroOException(e.getRol());
-            //busco el tercero con el rol indicado
-            TerceroRolTipoTerEntity terceroRol = terceroRoles.stream()
-                    .filter(tr->(tr.getRol().getId().equals(rol.getId())))
-                    .findFirst()
-                    .orElse(null);
-
-            if (terceroRol == null) throw new BadRequestCustom("El rol no esta relacionado con el tercero");
-
-            //crea el correo y lo une al tercero_rol_email
-            emailCreacionAdapter.crearEmailTercero(EmailReqDTO
-                    .builder()
-                            .email(e.getEmail())
-                            .tipoCorreo(e.getTipoCorreo())
-                            .build()
-                    , terceroRol);
-        });
         return newTercero.getId();
     }
 
-    public Long crearContacto(){
-        return 7L;
+    @Transactional
+    public Long crearContacto(TerceroContactoDTO data){
+        TerceroEntity terceroContacto = terceroLogic.crearTercero(data, data.getDocDetalles());
+        TerceroEntity tercero = validacionExistencia.obtenerTerceroOException(data.getContactoDe());
+
+
+        //creacion contacto
+        ContactoEntity contacto = contactoAdapter.crearContacto(ContactoReqEntity
+                .builder()
+                        .tercero(tercero)
+                        .contacto(terceroContacto)
+                        .cargo(data.getCargoId())
+                .build());
+
+
+        //creacion direcciones y telefonos
+        terceroLogic.crearDirecciones(data.getDirecciones(),terceroContacto,contacto);
+        terceroLogic.crearTelefonos(data.getTelefonos(),terceroContacto,contacto);
+        terceroLogic.crearEmails(data.getEmails(),null,contacto);
+
+        return contacto.getId();
     }
+
+
 }
